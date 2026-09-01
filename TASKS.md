@@ -9,8 +9,8 @@ verification command has actually been run in this session.
 |---|---|---|
 | A | Repository foundation + reproducible existing-site audit | **done** |
 | B | Architecture, appointment operations, data-protection decisions | **done (docs-level) — see open client items below** |
-| C | Design system + homepage frontend (scope-limited routes) | not started — next |
-| D | Production appointment integration | blocked on Phase B open client items |
+| C | Design system + homepage frontend (scope-limited routes) | **done** |
+| D | Production appointment integration | dev-adapter flow built and tested end-to-end in Phase C; blocked on Phase B open client items for a real provider/DB |
 | E | SEO migration + approved content routes | not started |
 | F | Production-readiness verification + deployment | not started |
 
@@ -38,6 +38,21 @@ Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-le
 
 **Open client-owned items carried into Phase D as blockers** (not resolvable by Claude): authorised enquiry recipients, staff access method, retention/deletion schedule, subject-access-request process, data controller identity, processor contracts, response-time SLA figure, and the full legal gate (Article 6/9 basis, DPIA decision, approved privacy notice). Phase C does not need these (dev adapter only); Phase D must not go live with real patient data until they're resolved.
 
+## Phase C — done
+
+- [x] Next.js 16 / React 19 / TypeScript 5.9 / Tailwind CSS 4 scaffold (ADR-001, with a documented ecosystem-compatibility amendment — TypeScript 7 and ESLint 10 were rejected as "latest" because `@typescript-eslint`/`eslint-plugin-*` don't yet support them)
+- [x] Design tokens (`src/styles/tokens.css`), typography (self-hosted via `next/font`), root layout, header + mobile nav + persistent mobile actions, footer, skip link
+- [x] Homepage: all 15 IA content modules built (some visually composed per `docs/08-design-system.md`), using real content or an honest "pending verification" state — no fabricated facts, no fake counters
+- [x] Appointment feature: schema, service, in-memory + Postgres repository (Postgres path unused/untested — no `DATABASE_URL` in this environment), dev-only notification adapter, DB-backed rate limiting, honeypot, idempotent submission (client token + uniqueness), hero card + mobile drawer (real focus trap via `inert`, not just `aria-hidden`) + full `/appointments` page + `/appointments/confirmation`
+- [x] Legal routes: `/privacy`, `/accessibility`, `/medical-disclaimer` — real drafted content, explicitly flagging what still needs legal/clinical sign-off rather than inventing it
+- [x] Cookie banner: correctly **not built** — no non-essential cookie/tracker is configured (`docs/12-data-processing-register.csv`), so per `.claude/rules/privacy-compliance.md` none should render yet
+- [x] `sitemap.ts` / `robots.ts` (production-gated via `VERCEL_ENV`), minimal `WebSite` JSON-LD only (Person/Physician JSON-LD deliberately deferred — see `src/lib/structured-data/website.ts`)
+- [x] Tests written and passing for real: 15 Vitest unit/integration tests (`tests/unit/`, `tests/integration/`), 109 Playwright tests passing across 4 viewport projects (390×844, 768×1024, 1440×900, 1920×1080) covering homepage, navigation, the full appointment flow (incl. idempotency, validation, rate-limiting, keyboard-only completion), responsive overflow, and WCAG 2.2 AA (axe) — 11 intentionally skipped (viewport-conditional variants)
+- [x] `npm run typecheck`, `npm run lint`, `npm run build` all pass with zero errors/warnings
+- [x] Manually verified in a real browser (Playwright MCP): full appointment submission end-to-end including the dev notification adapter firing and logging non-PII output; DB-backed rate limiter and idempotency also verified directly via `curl`
+- [x] Two real bugs found and fixed during this phase: (1) header nav overlapped/clipped the CTA button in the 768–1023px range — breakpoint moved from `md` to `lg` sitewide to match the hero's split; (2) WCAG contrast/focus-management defects found by the axe scan — bronze CTA button contrast (3.99:1) raised to `bronze-700`/`bronze-800` (5.53:1/7.61:1), the closed mobile drawer's focusable content was reachable despite `aria-hidden` (fixed by switching to the `inert` attribute), and the horizontally-scrollable comparison table wasn't keyboard-operable (added `tabIndex`/`role="region"`)
+- [x] `scripts/check-links.mjs`, `check-metadata.mjs`, `check-structured-data.mjs`, `check-repository.mjs`, `generate-content-report.mjs` written and run successfully against the production build; `check-redirects.mjs` written and correctly reports "not implemented yet" (Phase E work)
+
 ## Known verification items (growing list — see docs/04-content-verification.md for the full tracked version)
 
 - GMC number, exact canonical title, "Clinical Professor" claim — unverified
@@ -48,10 +63,19 @@ Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-le
 
 ## Next task
 
-Begin Phase C: scaffold the Next.js/TypeScript/Tailwind app (ADR-001),
-design tokens, typography, root layout, header, mobile nav, footer,
-conditional cookie-consent component, then the homepage and its
-appointment-request slice against the dev notification adapter. Routes are
-limited to `/`, `/appointments` (+ confirmation), `/privacy`,
-`/accessibility`, `/medical-disclaimer`, `/cookies` (conditional), and the
-appointment API — see `docs/02-information-architecture.md`.
+Begin Phase E: SEO migration + approved content routes — but note Phase D's
+production data path (real notification provider + real Postgres) and the
+Phase B legal gate are still open and are the harder, client-owned
+blockers. Recommended concrete next steps, in order:
+1. Get client answers on the Phase B appointment-operations open items
+   (`docs/10-appointment-flow.md`) and the legal gate
+   (`docs/04-content-verification.md`) — nothing else in Phase D/F can
+   close without these.
+2. Resolve the canonical positioning statement with the client (the single
+   biggest content blocker — it gates the About page, all treatment pages,
+   and every JSON-LD Person/Physician block).
+3. Start Phase E content: the treatment-page consolidation (10→1 for the
+   hernia cluster, etc., per `docs/02-information-architecture.md`) is the
+   largest chunk of remaining work and doesn't depend on the above two
+   items — it can start in parallel once each page's facts clear
+   `.claude/skills/review-medical-content/`.

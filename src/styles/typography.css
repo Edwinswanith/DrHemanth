@@ -1,0 +1,54 @@
+/* Typography primitives. Components should use Tailwind utility classes
+   generated from the tokens in tokens.css; this file only holds the small
+   set of base-element rules that apply site-wide. */
+
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--color-text-primary);
+}
+
+h1 {
+  font-size: var(--text-hero);
+}
+
+h2 {
+  font-size: var(--text-display);
+}
+
+h3 {
+  font-size: var(--text-heading);
+}
+
+p {
+  max-width: var(--spacing-content-max);
+}
+
+/* Respect the client's explicit reduced-motion requirement site-wide,
+   not just per-component — belt and braces alongside per-component
+   handling. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

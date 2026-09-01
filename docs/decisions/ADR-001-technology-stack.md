@@ -26,6 +26,21 @@ real interactivity is required.
   rejected: perpetuates the old platform's opacity (no accessible source,
   vendor lock-in) that this rebuild is explicitly meant to escape.
 
+## Amendment (2026-09-01, same day)
+
+Pinned `typescript` to `5.9.3`, not the npm `latest` tag `7.0.2` (a native-
+compiler rewrite released very recently). Verified via `npm install` that
+`@typescript-eslint` (pulled in by `eslint-config-next`) declares a peer
+range of `typescript >=4.8.4 <6.1.0` — TypeScript 7 is outside the
+ecosystem's current support window and installing it produced peer-
+dependency conflicts. "Current stable version supported by the package
+ecosystem" is interpreted as the newest version the actual dependency graph
+supports without conflict, not the newest `latest`-tagged release in
+isolation. Same reasoning applied to `eslint`: pinned to `9.39.5` rather
+than `latest` (`10.9.1`), since `eslint-config-next`'s own plugin
+dependencies (`eslint-plugin-jsx-a11y`, `eslint-plugin-react`) declare a
+peer range capped at ESLint 9.
+
 ## Consequences
 
 Enables static generation for most content routes (good for SEO/Core Web

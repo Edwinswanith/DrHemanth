@@ -1,0 +1,5 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["lhr1"],
+  "_comment": "Per docs/decisions/ADR-005-uk-hosting.md: all serverless functions, including the appointment API, are pinned to lhr1 (London). Static content still benefits from Vercel's global CDN — that split is intentional, see the ADR for the full residency caveat."
+}

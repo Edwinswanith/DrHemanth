@@ -33,6 +33,7 @@ before it can appear on a production route. Claude may mark content
 | Testimonials (3 shown + 13 survey permalinks) | Published on old site | Consent/attribution unconfirmed; source platform (possibly I Want Great Care) unconfirmed | **pending — do not republish until resolved** |
 | Fees/insurers accepted | Not detailed on old site | None | **pending** |
 | Social media handles still active/owned | Facebook, X/Twitter, LinkedIn, YouTube links published | Not re-verified | **pending** |
+| Primary "call the practice" telephone number | `020 3371 1785` (used on the old site's general-appointment page, distinct from the 2 hospital-specific secretary lines) | Sourced from live crawl (real, currently published), not re-confirmed with the practice | **pending — in use as the site's persistent Call action, flag for confirmation before Phase F launch** |
 | Publications list currency | Published on research page | Not cross-checked against peer-reviewed sources (tier 6) | **pending** |
 
 ## Canonical positioning — production gate
