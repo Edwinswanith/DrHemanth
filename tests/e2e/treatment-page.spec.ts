@@ -20,6 +20,13 @@ const treatmentPages = [
     firstReferenceName: "NHS — Gallstones",
     firstReferenceHref: "https://www.nhs.uk/conditions/gallstones/",
   },
+  {
+    slug: "bile-duct-exploration",
+    name: "Bile Duct Exploration",
+    linkText: /Bile duct exploration/,
+    firstReferenceName: "Guy's and St Thomas' NHS Foundation Trust — ERCP (endoscopic retrograde cholangio pancreatography)",
+    firstReferenceHref: "https://www.guysandstthomas.nhs.uk/health-information/ercp-endoscopic-retrograde-cholangio-pancreatography",
+  },
 ];
 
 for (const treatment of treatmentPages) {
@@ -63,3 +70,15 @@ for (const treatment of treatmentPages) {
     });
   });
 }
+
+test.describe("Bile Duct Exploration risk-statistics attribution", () => {
+  // A medical-content-reviewer pass flagged that citing specific risk
+  // percentages (e.g. pancreatitis rates) without attribution could read
+  // as Prof. Sheth's personal outcomes rather than general NHS-published
+  // figures — see src/content/treatments/bile-duct-exploration.ts and
+  // src/components/medical/risk-information.tsx's riskStatisticsNote prop.
+  test("shows the general-rates disclaimer directly beside the risk statistics", async ({ page }) => {
+    await page.goto("/treatments/bile-duct-exploration");
+    await expect(page.getByText("not Prof. Sheth's personal or practice-specific results", { exact: false })).toBeVisible();
+  });
+});

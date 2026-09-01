@@ -93,6 +93,11 @@ export const treatmentContentSchema = z.object({
   benefits: z.array(z.string().min(1)).min(1),
   limitations: z.array(z.string().min(1)).min(1),
   risks: z.array(z.string().min(1)).min(1),
+  // Only needed when `risks` cites specific numeric rates — makes clear
+  // to the reader that they're general published figures, not this
+  // surgeon's personal outcomes. See src/content/treatments/bile-duct-exploration.ts
+  // for why: a medical-content-reviewer pass flagged this ambiguity.
+  riskStatisticsNote: z.string().min(1).optional(),
   recovery: z.string().min(1),
   alternatives: z.array(z.string().min(1)).min(1),
   urgentWarningSigns: z.array(z.string().min(1)).min(1),

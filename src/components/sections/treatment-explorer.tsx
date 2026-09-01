@@ -13,7 +13,13 @@ const categories = [
     // surgery below.
     href: "/treatments/gallbladder-surgery",
   },
-  { name: "Bile duct exploration", summary: "Diagnosis and treatment of bile duct stones and blockages." },
+  {
+    name: "Bile duct exploration",
+    summary: "Diagnosis and treatment of bile duct stones and blockages.",
+    // See src/content/treatments/bile-duct-exploration.ts — same pattern
+    // as the other linked categories.
+    href: "/treatments/bile-duct-exploration",
+  },
   {
     name: "Hernia surgery",
     summary: "Repair of inguinal, umbilical, incisional, and hiatal hernias.",

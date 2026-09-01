@@ -11,7 +11,7 @@ verification command has actually been run in this session.
 | B | Architecture, appointment operations, data-protection decisions | **done (docs-level) — see open client items below** |
 | C | Design system + homepage frontend (scope-limited routes) | **done** |
 | D | Production appointment integration | dev-adapter flow built and tested end-to-end in Phase C; blocked on Phase B open client items for a real provider/DB |
-| E | SEO migration + approved content routes | **in progress** — 2 of 7 treatment categories built |
+| E | SEO migration + approved content routes | **in progress** — 3 of 7 treatment categories built |
 | F | Production-readiness verification + deployment | not started |
 
 Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-lead-snoopy-toast.md` (approved plan), mirrored into `docs/decisions/ADR-001..005`.
@@ -95,14 +95,34 @@ Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-le
   schema limit — fixed before the build would pass, exactly the "build
   fails on invalid content" behaviour the schema is there for.)
 
+- [x] `/treatments/bile-duct-exploration` built: consolidates the 4-URL
+  CBD-exploration/choledocholithiasis/ERCP cluster. Sourced from Guy's and
+  St Thomas' NHS Foundation Trust (ERCP) and North Bristol NHS Trust
+  (laparoscopic bile duct exploration). Highest-stakes page so far — ERCP
+  carries a real, small mortality risk — so risk figures are stated
+  precisely (pancreatitis ~5 in 100; severe/fatal <1 in 500; perforation
+  <1 in 750), verified against the directly-fetched source rather than an
+  earlier, discarded auto-summary that suggested different numbers. A
+  `medical-content-reviewer` pass flagged that citing specific rates
+  without attribution could read as Prof. Sheth's own outcomes rather
+  than general NHS figures — fixed by adding a new optional
+  `riskStatisticsNote` field to `treatmentContentSchema` /
+  `RiskInformation`, rendered as an inline disclaimer directly above the
+  risk list, with a dedicated Playwright test asserting it's visible.
+  Full suite re-run clean: 173/173 Playwright tests, 15/15 Vitest tests,
+  typecheck/lint/build all pass. Verified visually in a real browser.
+
 **Remaining Phase E work:** the same pattern (fresh, sourced, reviewer-
-screened content; noindex until clinical sign-off) for the other 5
-treatment categories (Upper GI endoscopy, anti-reflux surgery, bile duct
-exploration, liver & spleen surgery, appendicectomy), then the robotic
-surgery hub, robotic-vs-laparoscopic comparison, About, locations, and
-legal-page rewrites — see `docs/02-information-architecture.md` for the
-full route list. None of this is blocked on the client; it can continue in
-parallel with the Phase B/D items below.
+screened content; noindex until clinical sign-off) for the other 4
+treatment categories (Upper GI endoscopy, anti-reflux surgery, liver &
+spleen surgery, appendicectomy), then the robotic surgery hub,
+robotic-vs-laparoscopic comparison, About, locations, and legal-page
+rewrites — see `docs/02-information-architecture.md` for the full route
+list. Also outstanding: a proper internal-linking pass once more pages
+exist (e.g. gallbladder surgery's `alternatives` field mentions bile duct
+exploration only as plain text, not yet a real link — worth doing as one
+pass across all pages rather than piecemeal). None of this is blocked on
+the client; it can continue in parallel with the Phase B/D items below.
 
 ## Known verification items (growing list — see docs/04-content-verification.md for the full tracked version)
 
@@ -115,16 +135,19 @@ parallel with the Phase B/D items below.
 ## Next task
 
 Continue Phase E: build the next treatment category using the same
-pattern now established by `/treatments/hernia-surgery` and
-`/treatments/gallbladder-surgery` (content file in `src/content/treatments/`,
-validated by `treatmentContentSchema`, route under `src/app/treatments/[slug]/`,
-reused `components/medical/*`, `medical-content-reviewer` screening pass,
-`noindex` until clinical sign-off, linked from `TreatmentExplorer`, add the
-new slug to `tests/e2e/treatment-page.spec.ts`'s data table and the
-axe/metadata/structured-data/responsive-layout route lists). Suggested
-next: liver-and-spleen surgery (9 old URLs, the largest remaining cluster)
-or bile duct exploration (4 old URLs, closely related to gallbladder
-surgery just built — cross-link the two once both exist).
+pattern now established by hernia surgery, gallbladder surgery, and bile
+duct exploration (content file in `src/content/treatments/`, validated by
+`treatmentContentSchema`, route under `src/app/treatments/[slug]/`,
+reused `components/medical/*` — including `riskStatisticsNote` on
+`RiskInformation` if the page cites specific numeric rates,
+`medical-content-reviewer` screening pass, `noindex` until clinical
+sign-off, linked from `TreatmentExplorer`, add the new slug to
+`tests/e2e/treatment-page.spec.ts`'s data table and the axe/metadata/
+structured-data/responsive-layout route lists). Suggested next:
+liver-and-spleen surgery (9 old URLs, the largest remaining cluster,
+though it's a more heterogeneous topic — benign liver disease, splenectomy,
+and liver cancer information all need care — consider whether it should
+be one page or split).
 
 Still genuinely blocked on the client (not Claude's to resolve): the Phase
 B appointment-operations/legal gate (`docs/10-appointment-flow.md`,

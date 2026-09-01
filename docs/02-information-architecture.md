@@ -28,7 +28,7 @@ actions, non-obscuring.
 | `/treatments/upper-gi-endoscopy` | GERD/upper-gi-endoscopy/achalasia cluster | Phase E | Merges 4 old URLs |
 | `/treatments/anti-reflux-surgery` | GERD/anti-reflux/hiatal-hernia cluster | Phase E | |
 | `/treatments/gallbladder-surgery` | cholecystectomy/gallstones cluster | **built** (Phase E started) | Merges 5 old URLs. `noindex`, `requires-clinical-review` — same pattern as hernia surgery below. |
-| `/treatments/bile-duct-exploration` | CBD/ERCP/choledocholithiasis cluster | Phase E | |
+| `/treatments/bile-duct-exploration` | CBD/ERCP/choledocholithiasis cluster | **built** (Phase E started) | Merges 4 old URLs. `noindex`, `requires-clinical-review`. Higher-stakes than the other two pages built so far — ERCP carries a real, small mortality risk from severe pancreatitis, stated precisely (not softened) with an inline attribution note clarifying the cited rates are general NHS-published figures, not Prof. Sheth's personal outcomes (added after a medical-content-reviewer pass flagged the ambiguity). |
 | `/treatments/hernia-surgery` | 10-URL hernia cluster | **built** (Phase E started) | Largest consolidation — see audit. Route is live but `noindex`: content is freshly written and NHS-sourced, screened by the medical-content-reviewer agent, but still `requires-clinical-review` — not yet approved by Prof. Sheth. First real use of the `components/medical/*` set. |
 | `/treatments/liver-and-spleen-surgery` | HPB/liver/splenectomy cluster | Phase E | Merges 9 old URLs |
 | `/treatments/appendicectomy` | appendectomy cluster | Phase E | |
