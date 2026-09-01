@@ -124,6 +124,41 @@ exploration only as plain text, not yet a real link — worth doing as one
 pass across all pages rather than piecemeal). None of this is blocked on
 the client; it can continue in parallel with the Phase B/D items below.
 
+## Cross-cutting: motion/visual polish (client-requested)
+
+Client asked for a "super cool animation" site; clarified via
+`AskUserQuestion` into two decisions: keep verifying/rewriting old content
+rather than duplicating it (no change), and add visual polish *within* the
+existing calm-motion contract rather than replacing it with a bold/flashy
+style. Delivered:
+
+- [x] `RevealOnScroll` (`components/ui/reveal-on-scroll.tsx`) wired into
+  `Section` by default — homepage/page sections fade up once as they
+  scroll into view. Safe-by-construction for no-JS/crawlers (see
+  `docs/08-design-system.md`).
+- [x] Hero on-load staggered entrance (`.hero-fade-up`).
+- [x] Accordion smooth expand/collapse (CSS grid-rows transition,
+  replacing the instant `hidden` toggle).
+- [x] Two real regressions caught and fixed by the existing test suite
+  while building this: (1) `tests/accessibility/wcag.spec.ts` was scanning
+  before scroll-revealed content ever revealed, producing false-positive
+  contrast findings — fixed by scrolling through the page before
+  analysing, which also matches how a real visitor experiences the page;
+  (2) the accordion's smooth-collapse implementation put `aria-hidden` on
+  a panel that still held a focusable link (the same defect class as the
+  mobile drawer, fixed the same way — `inert`, not `aria-hidden`).
+- [x] Full suite re-run clean: 173/173 Playwright tests, 15/15 Vitest
+  tests, typecheck/lint/build all pass. Verified visually in a real
+  browser at both initial load and post-scroll.
+- [x] Audited the old site's actual video content as part of this
+  request: `/patient-education-videos-.../` is an empty template with no
+  real videos (confirmed by direct fetch); the "Media" hub is thin. One
+  new, useful fact surfaced: an Ealing Times article (linked from the old
+  site's own "In the News" page) names Prof. Sheth as one of four surgeons
+  trained on Ealing Hospital's da Vinci robotic system — added to
+  `docs/04-content-verification.md` as a stronger (but still not
+  publishable-as-fact) source than what was there before.
+
 ## Known verification items (growing list — see docs/04-content-verification.md for the full tracked version)
 
 - GMC number, exact canonical title, "Clinical Professor" claim — unverified

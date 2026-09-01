@@ -34,3 +34,23 @@
 .measure {
   max-width: var(--spacing-content-max);
 }
+
+/* Hero's one-time, on-load staggered entrance — small opacity/translate
+   only, per element, under 250ms each, per .claude/rules/design-system.md.
+   Neutralised for reduced-motion users by the global
+   `prefers-reduced-motion` rule in typography.css, which forces
+   animation-duration to near-zero — no separate guard needed here. */
+@keyframes fade-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-fade-up {
+  animation: fade-up-in 240ms ease-out both;
+}

@@ -76,6 +76,21 @@ list against this 98-URL set for anything crawled but not sitemapped.
 8. **No cookie-consent mechanism detected** anywhere in the crawled markup.
 9. **All 98 pages are indexable** (no `noindex`), including the junk/system
    pages above — a real cleanup opportunity in the redirect/410 map.
+10. **The "Patient Education Videos" page has no actual videos** — confirmed
+    by direct fetch: it's an empty template ("Explore this section for
+    resources on patient education animations...") with no embedded media,
+    "awaiting video content implementation." The `/media-.../` page is a
+    thin hub linking to it, to `/in-the-news-.../`, and to testimonials —
+    not a real media library. `/in-the-news-.../` has 2 genuine external
+    press mentions about the Ealing Hospital robotic programme (a Facebook
+    post and an [Ealing Times article](https://www.ealingtimes.co.uk/news/26175437.dr-hemant-sheth-surgical-robot-winning-hearts-minds/)
+    naming Prof. Sheth as one of four surgeons trained on the da Vinci
+    system there — see `04-content-verification.md`). The footer's YouTube
+    channel link (`youtube.com/channel/UCArSTcjcxMRNC5XWIFscO2Q`) could not
+    be confirmed to contain any public videos via automated fetch. There is
+    no substantial existing video library to migrate — `/videos-media` in
+    the new IA (`02-information-architecture.md`) is closer to new content
+    than a migration.
 
 ## Doctor & practice facts found (unverified unless noted — see `04-content-verification.md`)
 

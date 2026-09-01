@@ -30,6 +30,39 @@ for a medical context. The old site is never the visual reference.
   motion` respected, no parallax/bounce/constant motion, nothing large
   animates on initial load.
 
+## Motion polish (added after client direction: "more visual polish within the calm system")
+
+Two additions layered onto the existing opacity/small-translate,
+<250ms-per-step, reduced-motion-respecting contract above — deliberately
+*not* a departure from it:
+
+- **`RevealOnScroll`** (`src/components/ui/reveal-on-scroll.tsx`): every
+  `Section` fades/translates up once as it scrolls into view. Safe by
+  construction, not convention — visible by default in SSR output and if
+  JS never runs (no-JS visitors and crawlers see fully visible content,
+  no animation); the pre-reveal hidden state is applied imperatively via
+  `useLayoutEffect` synchronously before paint, so there's no flash; skips
+  the hidden state entirely under `prefers-reduced-motion`. Opt out per
+  section with `reveal={false}`.
+- **Hero on-load stagger** (`.hero-fade-up` in `utilities.css`, applied in
+  `homepage-hero.tsx`): the hero's own text/CTA elements fade up in a
+  short staggered sequence (0–280ms total) on first paint, since it's the
+  one section that doesn't need a scroll trigger.
+- **Accordion smooth expand** (`src/components/ui/accordion.tsx`): CSS
+  `grid-template-rows` 0fr→1fr transition instead of an instant `hidden`
+  toggle — content stays crawlable/real in the DOM throughout.
+
+**Testing note:** because content genuinely is `opacity: 0` before it's
+been scrolled to, `tests/accessibility/wcag.spec.ts` scrolls through the
+full page before running axe (the same journey a real visitor takes) —
+scanning immediately after `goto()` produced false-positive contrast
+findings against transient pre-reveal state. This caught two real defects
+during implementation: the accordion's collapsed panels held focusable
+links while `aria-hidden` (same defect class as the mobile drawer — fixed
+with `inert`, not `aria-hidden`, for the same reason), and the drawer's
+own accessibility test needed to wait for its slide-in transition to
+settle before scanning.
+
 ## Component state contract
 
 Every component in `src/components/ui/` implements, as applicable: default,

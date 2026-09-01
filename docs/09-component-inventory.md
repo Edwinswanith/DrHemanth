@@ -19,6 +19,7 @@ Phase C completion.
 | Tabs (comparison) | `components/ui/tabs.tsx` | not built — comparison shipped as an accessible `<table>` instead (see `05-seo-geo-strategy.md`); revisit only if a tabbed presentation is specifically requested |
 | Form field primitives | `components/ui/form-field.tsx` | **built** |
 | Visually hidden | `components/ui/visually-hidden.tsx` | **built** |
+| Reveal on scroll | `components/ui/reveal-on-scroll.tsx` | **built** — wired into `Section` by default; see `08-design-system.md`'s "Motion polish" note |
 | Homepage hero | `components/sections/homepage-hero.tsx` | **built** |
 | Trust/evidence strip | `components/sections/trust-evidence-strip.tsx` | **built** |
 | Surgeon introduction | `components/sections/surgeon-introduction.tsx` | **built** |

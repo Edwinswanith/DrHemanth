@@ -10,9 +10,13 @@ export interface AccordionItemData {
 
 /**
  * Real, crawlable HTML: all answers are always present in the DOM (not
- * mounted/unmounted on toggle), only visually hidden — so this never hides
- * FAQ content from a non-JS fetch or from GEO/SEO crawling. Keyboard and
- * screen-reader accessible via aria-expanded/aria-controls.
+ * mounted/unmounted on toggle), only visually collapsed — so this never
+ * hides FAQ content from a non-JS fetch or from GEO/SEO crawling.
+ * Keyboard and screen-reader accessible via aria-expanded/aria-controls/
+ * aria-hidden. The collapse/expand uses the CSS grid-template-rows 0fr/1fr
+ * technique (smooth height animation with no JS measurement needed) rather
+ * than an instant `hidden` toggle — a `prefers-reduced-motion` respecting,
+ * opacity/size-only transition per .claude/rules/design-system.md.
  */
 export function Accordion({ items }: { items: AccordionItemData[] }) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -43,13 +47,26 @@ export function Accordion({ items }: { items: AccordionItemData[] }) {
               </button>
             </h3>
             <div
-              id={panelId}
-              role="region"
-              aria-labelledby={buttonId}
-              hidden={!isOpen}
-              className="pb-4 text-ink-700"
+              className="grid transition-[grid-template-rows] duration-(--duration-base) ease-(--ease-standard)"
+              style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
             >
-              {item.answer}
+              <div
+                id={panelId}
+                role="region"
+                aria-labelledby={buttonId}
+                // `inert`, not `aria-hidden`: some FAQ answers contain real
+                // links (e.g. to /privacy). aria-hidden on a container that
+                // still holds focusable descendants is itself an
+                // accessibility violation (axe: aria-hidden-focus) — the
+                // same defect class fixed on the mobile drawer, see
+                // src/components/ui/drawer.tsx. inert correctly removes
+                // the whole collapsed panel from both focus and the
+                // accessibility tree.
+                inert={!isOpen}
+                className="overflow-hidden"
+              >
+                <div className="pb-4 text-ink-700">{item.answer}</div>
+              </div>
             </div>
           </div>
         );
