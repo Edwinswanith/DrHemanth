@@ -27,7 +27,7 @@ actions, non-obscuring.
 | `/treatments` | `services-...` | Phase E | Hub page |
 | `/treatments/upper-gi-endoscopy` | GERD/upper-gi-endoscopy/achalasia cluster | Phase E | Merges 4 old URLs |
 | `/treatments/anti-reflux-surgery` | GERD/anti-reflux/hiatal-hernia cluster | Phase E | |
-| `/treatments/gallbladder-surgery` | cholecystectomy/gallstones cluster | Phase E | Merges 5 old URLs |
+| `/treatments/gallbladder-surgery` | cholecystectomy/gallstones cluster | **built** (Phase E started) | Merges 5 old URLs. `noindex`, `requires-clinical-review` — same pattern as hernia surgery below. |
 | `/treatments/bile-duct-exploration` | CBD/ERCP/choledocholithiasis cluster | Phase E | |
 | `/treatments/hernia-surgery` | 10-URL hernia cluster | **built** (Phase E started) | Largest consolidation — see audit. Route is live but `noindex`: content is freshly written and NHS-sourced, screened by the medical-content-reviewer agent, but still `requires-clinical-review` — not yet approved by Prof. Sheth. First real use of the `components/medical/*` set. |
 | `/treatments/liver-and-spleen-surgery` | HPB/liver/splenectomy cluster | Phase E | Merges 9 old URLs |

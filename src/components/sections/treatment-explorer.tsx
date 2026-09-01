@@ -5,15 +5,22 @@ import { Card } from "@/components/ui/card";
 const categories = [
   { name: "Upper GI endoscopy", summary: "Diagnostic and therapeutic endoscopy of the upper digestive tract." },
   { name: "Anti-reflux surgery", summary: "Surgical treatment for gastro-oesophageal reflux disease (GERD)." },
-  { name: "Gallbladder surgery", summary: "Laparoscopic and open surgery for gallstones and gallbladder disease." },
+  {
+    name: "Gallbladder surgery",
+    summary: "Laparoscopic and open surgery for gallstones and gallbladder disease.",
+    // See src/content/treatments/gallbladder-surgery.ts — same
+    // requires-clinical-review / noindex-until-approved pattern as hernia
+    // surgery below.
+    href: "/treatments/gallbladder-surgery",
+  },
   { name: "Bile duct exploration", summary: "Diagnosis and treatment of bile duct stones and blockages." },
   {
     name: "Hernia surgery",
     summary: "Repair of inguinal, umbilical, incisional, and hiatal hernias.",
-    // The only category with a real page so far — content is written and
-    // sourced but still "requires-clinical-review" (noindex until
-    // approved), see src/content/treatments/hernia-surgery.ts. The other
-    // categories stay as non-linked cards until each has the same.
+    // Content is written and sourced but still "requires-clinical-review"
+    // (noindex until approved), see src/content/treatments/hernia-surgery.ts.
+    // The remaining categories stay as non-linked cards until each has
+    // the same treatment.
     href: "/treatments/hernia-surgery",
   },
   { name: "Liver & spleen surgery", summary: "Surgical management of selected liver and spleen conditions." },

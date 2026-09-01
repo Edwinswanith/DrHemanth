@@ -11,7 +11,7 @@ verification command has actually been run in this session.
 | B | Architecture, appointment operations, data-protection decisions | **done (docs-level) — see open client items below** |
 | C | Design system + homepage frontend (scope-limited routes) | **done** |
 | D | Production appointment integration | dev-adapter flow built and tested end-to-end in Phase C; blocked on Phase B open client items for a real provider/DB |
-| E | SEO migration + approved content routes | **in progress** — 1 of 7 treatment categories built |
+| E | SEO migration + approved content routes | **in progress** — 2 of 7 treatment categories built |
 | F | Production-readiness verification + deployment | not started |
 
 Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-lead-snoopy-toast.md` (approved plan), mirrored into `docs/decisions/ADR-001..005`.
@@ -79,14 +79,30 @@ Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-le
 - [x] `docs/02-information-architecture.md` and `docs/04-content-verification.md`
   updated with the page's status and what it's waiting on
 
+- [x] `/treatments/gallbladder-surgery` built: consolidates the 5-URL
+  cholecystectomy/gallstones cluster, same 13-part shape and pattern as
+  hernia surgery. Sourced from nhs.uk/conditions/gallstones/,
+  nhs.uk/conditions/gallbladder-removal/, and Guy's and St Thomas' NHS
+  Foundation Trust (tier: nhs-trust). Screened by the
+  `medical-content-reviewer` agent — one self-contradictory phrase found
+  and fixed ("unsafe to continue safely" → "unsafe to continue"),
+  otherwise clean. `tests/e2e/treatment-page.spec.ts` refactored to be
+  data-driven so each new treatment page is a one-entry addition; added to
+  the axe/metadata/structured-data/responsive-layout route lists. Full
+  suite re-run clean: 149/149 Playwright tests, 15/15 Vitest tests,
+  typecheck/lint/build all pass. (Caught one real content bug via the
+  build's own Zod validation: `metaDescription` exceeded the 160-char
+  schema limit — fixed before the build would pass, exactly the "build
+  fails on invalid content" behaviour the schema is there for.)
+
 **Remaining Phase E work:** the same pattern (fresh, sourced, reviewer-
-screened content; noindex until clinical sign-off) for the other 6
-treatment categories (Upper GI endoscopy, anti-reflux surgery, gallbladder
-surgery, bile duct exploration, liver & spleen surgery, appendicectomy),
-then the robotic surgery hub, robotic-vs-laparoscopic comparison, About,
-locations, and legal-page rewrites — see `docs/02-information-architecture.md`
-for the full route list. None of this is blocked on the client; it can
-continue in parallel with the Phase B/D items below.
+screened content; noindex until clinical sign-off) for the other 5
+treatment categories (Upper GI endoscopy, anti-reflux surgery, bile duct
+exploration, liver & spleen surgery, appendicectomy), then the robotic
+surgery hub, robotic-vs-laparoscopic comparison, About, locations, and
+legal-page rewrites — see `docs/02-information-architecture.md` for the
+full route list. None of this is blocked on the client; it can continue in
+parallel with the Phase B/D items below.
 
 ## Known verification items (growing list — see docs/04-content-verification.md for the full tracked version)
 
@@ -99,13 +115,16 @@ continue in parallel with the Phase B/D items below.
 ## Next task
 
 Continue Phase E: build the next treatment category using the same
-pattern established by `/treatments/hernia-surgery` (content file in
-`src/content/treatments/`, validated by `treatmentContentSchema`, route
-under `src/app/treatments/[slug]/`, reused `components/medical/*`,
-`medical-content-reviewer` screening pass, `noindex` until clinical
-sign-off, linked from `TreatmentExplorer`, added to the test suites).
-Suggested order by cluster size: gallbladder surgery (5 old URLs) or
-liver-and-spleen surgery (9 old URLs) next.
+pattern now established by `/treatments/hernia-surgery` and
+`/treatments/gallbladder-surgery` (content file in `src/content/treatments/`,
+validated by `treatmentContentSchema`, route under `src/app/treatments/[slug]/`,
+reused `components/medical/*`, `medical-content-reviewer` screening pass,
+`noindex` until clinical sign-off, linked from `TreatmentExplorer`, add the
+new slug to `tests/e2e/treatment-page.spec.ts`'s data table and the
+axe/metadata/structured-data/responsive-layout route lists). Suggested
+next: liver-and-spleen surgery (9 old URLs, the largest remaining cluster)
+or bile duct exploration (4 old URLs, closely related to gallbladder
+surgery just built — cross-link the two once both exist).
 
 Still genuinely blocked on the client (not Claude's to resolve): the Phase
 B appointment-operations/legal gate (`docs/10-appointment-flow.md`,
