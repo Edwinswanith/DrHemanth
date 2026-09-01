@@ -56,6 +56,12 @@ statement) without client confirmation. Until confirmed:
   About, header/footer, appointment pages, treatment pages, locations,
   metadata, OG tags, JSON-LD, external directory profiles).
 
+## Pages awaiting clinical sign-off (Phase E)
+
+| Page | Status | What's needed |
+|---|---|---|
+| `/treatments/hernia-surgery` | `requires-clinical-review`, `noindex` | Freshly written (not copied from the old site), sourced from nhs.uk/conditions/hernia/ and nhs.uk/conditions/inguinal-hernia-repair/, screened by the medical-content-reviewer agent with no findings. Makes no claim about Prof. Sheth's personal technique/caseload — needs his review and, if accurate, his sign-off before `reviewMeta.status` can move past `requires-clinical-review` (a status only he or an authorised clinical reviewer can set, outside this codebase) and the page can be indexed. |
+
 ## Confirmed defects (not open questions — already verified true)
 
 - `/post-op-instructions-.../` contains orthopaedic-surgery content

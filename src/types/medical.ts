@@ -8,9 +8,8 @@ export type MedicalContentStatus = "draft" | "requires-clinical-review" | "retir
 
 export interface MedicalReviewMeta {
   status: MedicalContentStatus;
-  author?: string;
-  clinicalReviewer?: string;
-  publishedDate?: string;
-  lastReviewed?: string;
-  references?: { label: string; url: string }[];
+  author: string;
+  clinicalReviewer: string | null;
+  publishedDate: string;
+  lastReviewed: string | null;
 }

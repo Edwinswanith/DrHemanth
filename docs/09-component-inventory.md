@@ -35,7 +35,7 @@ Phase C completion.
 | Appointment form (shared) | `components/appointment/appointment-form.tsx` | **built** — used by hero card, mobile drawer, and `/appointments` |
 | Appointment mobile drawer | `components/appointment/appointment-mobile-drawer.tsx` | **built** |
 | Appointment success/error | `components/appointment/appointment-success.tsx`, `appointment-error.tsx` | **built** |
-| Treatment summary/options/risks/references/review-details/urgent-notice | `components/medical/*.tsx` | planned (Phase E — needs approved clinical content first) |
+| Treatment summary/options/risks/references/review-details/urgent-notice | `components/medical/*.tsx` | **built** — first used by `/treatments/hernia-surgery`; content is `requires-clinical-review`, not yet approved, so the route is `noindex` |
 | Breadcrumbs | `components/seo/breadcrumbs.tsx` | **built** (includes its own `BreadcrumbList` JSON-LD) |
 | Structured data renderer | `components/seo/structured-data.tsx` | **built** |
 | Article metadata | `components/seo/article-metadata.tsx` | planned (Phase E — needs a real article/treatment page to attach to) |

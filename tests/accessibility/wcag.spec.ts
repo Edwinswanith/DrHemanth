@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const routes = ["/", "/appointments", "/privacy", "/accessibility", "/medical-disclaimer"];
+const routes = ["/", "/appointments", "/privacy", "/accessibility", "/medical-disclaimer", "/treatments/hernia-surgery"];
 
 test.describe("Accessibility (WCAG 2.2 AA)", () => {
   for (const route of routes) {

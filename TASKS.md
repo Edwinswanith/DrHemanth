@@ -11,7 +11,7 @@ verification command has actually been run in this session.
 | B | Architecture, appointment operations, data-protection decisions | **done (docs-level) — see open client items below** |
 | C | Design system + homepage frontend (scope-limited routes) | **done** |
 | D | Production appointment integration | dev-adapter flow built and tested end-to-end in Phase C; blocked on Phase B open client items for a real provider/DB |
-| E | SEO migration + approved content routes | not started |
+| E | SEO migration + approved content routes | **in progress** — 1 of 7 treatment categories built |
 | F | Production-readiness verification + deployment | not started |
 
 Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-lead-snoopy-toast.md` (approved plan), mirrored into `docs/decisions/ADR-001..005`.
@@ -53,6 +53,41 @@ Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-le
 - [x] Two real bugs found and fixed during this phase: (1) header nav overlapped/clipped the CTA button in the 768–1023px range — breakpoint moved from `md` to `lg` sitewide to match the hero's split; (2) WCAG contrast/focus-management defects found by the axe scan — bronze CTA button contrast (3.99:1) raised to `bronze-700`/`bronze-800` (5.53:1/7.61:1), the closed mobile drawer's focusable content was reachable despite `aria-hidden` (fixed by switching to the `inert` attribute), and the horizontally-scrollable comparison table wasn't keyboard-operable (added `tabIndex`/`role="region"`)
 - [x] `scripts/check-links.mjs`, `check-metadata.mjs`, `check-structured-data.mjs`, `check-repository.mjs`, `generate-content-report.mjs` written and run successfully against the production build; `check-redirects.mjs` written and correctly reports "not implemented yet" (Phase E work)
 
+## Phase E — in progress
+
+- [x] `/treatments/hernia-surgery` built: consolidates the 10-URL hernia
+  cluster (see `docs/02-information-architecture.md`), full 13-part
+  medical-content shape, new `components/medical/*` set (treatment
+  summary/options/risks/urgent-notice/references/review-details)
+- [x] Content freshly written and sourced from NHS patient-information
+  pages (nhs.uk/conditions/hernia/, nhs.uk/conditions/inguinal-hernia-repair/)
+  — not copied from the old site
+- [x] Screened by the `medical-content-reviewer` agent against the full
+  rubric: no findings (no superlatives, benefits/limitations/risks/
+  alternatives all present, urgent warning signs distinct from routine
+  recovery info, robotic surgery correctly framed as surgeon-controlled
+  and not superior, references credible, status correctly
+  `requires-clinical-review` — never `approved`, which the schema
+  structurally can't produce)
+- [x] Route is real and reachable (linked from the homepage's Treatment
+  Explorer) but `robots: noindex` while unreviewed — per
+  `.claude/rules/seo-geo.md` and `.claude/rules/medical-content.md`
+- [x] Tests added: `tests/e2e/treatment-page.spec.ts` (3 tests × 4
+  viewports), added to the axe/metadata/structured-data/responsive-layout
+  suites — full suite re-run clean: 129/129 Playwright tests, 15/15
+  Vitest tests, typecheck/lint/build all pass
+- [x] `docs/02-information-architecture.md` and `docs/04-content-verification.md`
+  updated with the page's status and what it's waiting on
+
+**Remaining Phase E work:** the same pattern (fresh, sourced, reviewer-
+screened content; noindex until clinical sign-off) for the other 6
+treatment categories (Upper GI endoscopy, anti-reflux surgery, gallbladder
+surgery, bile duct exploration, liver & spleen surgery, appendicectomy),
+then the robotic surgery hub, robotic-vs-laparoscopic comparison, About,
+locations, and legal-page rewrites — see `docs/02-information-architecture.md`
+for the full route list. None of this is blocked on the client; it can
+continue in parallel with the Phase B/D items below.
+
 ## Known verification items (growing list — see docs/04-content-verification.md for the full tracked version)
 
 - GMC number, exact canonical title, "Clinical Professor" claim — unverified
@@ -63,19 +98,17 @@ Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-le
 
 ## Next task
 
-Begin Phase E: SEO migration + approved content routes — but note Phase D's
-production data path (real notification provider + real Postgres) and the
-Phase B legal gate are still open and are the harder, client-owned
-blockers. Recommended concrete next steps, in order:
-1. Get client answers on the Phase B appointment-operations open items
-   (`docs/10-appointment-flow.md`) and the legal gate
-   (`docs/04-content-verification.md`) — nothing else in Phase D/F can
-   close without these.
-2. Resolve the canonical positioning statement with the client (the single
-   biggest content blocker — it gates the About page, all treatment pages,
-   and every JSON-LD Person/Physician block).
-3. Start Phase E content: the treatment-page consolidation (10→1 for the
-   hernia cluster, etc., per `docs/02-information-architecture.md`) is the
-   largest chunk of remaining work and doesn't depend on the above two
-   items — it can start in parallel once each page's facts clear
-   `.claude/skills/review-medical-content/`.
+Continue Phase E: build the next treatment category using the same
+pattern established by `/treatments/hernia-surgery` (content file in
+`src/content/treatments/`, validated by `treatmentContentSchema`, route
+under `src/app/treatments/[slug]/`, reused `components/medical/*`,
+`medical-content-reviewer` screening pass, `noindex` until clinical
+sign-off, linked from `TreatmentExplorer`, added to the test suites).
+Suggested order by cluster size: gallbladder surgery (5 old URLs) or
+liver-and-spleen surgery (9 old URLs) next.
+
+Still genuinely blocked on the client (not Claude's to resolve): the Phase
+B appointment-operations/legal gate (`docs/10-appointment-flow.md`,
+`docs/04-content-verification.md`) and the canonical positioning statement
+— both needed before Phase D can go live with real patient data or the
+About/robotic-surgery pages can be finalised.

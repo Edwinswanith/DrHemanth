@@ -10,7 +10,7 @@
  * Usage: node scripts/check-structured-data.mjs [--base http://localhost:3000]
  */
 const BASE = (process.argv.includes("--base") ? process.argv[process.argv.indexOf("--base") + 1] : null) ?? "http://localhost:3000";
-const ROUTES = ["/", "/appointments", "/privacy", "/accessibility", "/medical-disclaimer"];
+const ROUTES = ["/", "/appointments", "/privacy", "/accessibility", "/medical-disclaimer", "/treatments/hernia-surgery"];
 
 async function main() {
   let totalBlocks = 0;
