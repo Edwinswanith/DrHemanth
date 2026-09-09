@@ -31,7 +31,7 @@ test.describe("Appointment request", () => {
     await expect(page).toHaveURL(/\/appointments\/confirmation\?ref=HS-/);
     await expect(page.getByRole("heading", { name: "Request received" })).toBeVisible();
     await expect(page.getByText(/Reference: HS-\d{8}-[A-F0-9]{8}/)).toBeVisible();
-    await expect(page.getByText("it is not a confirmed appointment")).toBeVisible();
+    await expect(page.getByText("requests an appointment")).toBeVisible();
   });
 
   test("client-side required validation blocks submission with empty fields", async ({ page }) => {

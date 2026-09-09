@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Manrope, Source_Serif_4 } from "next/font/google";
 import { siteConfig } from "@/content/site";
 import { PageShell } from "@/components/layout/page-shell";
 import "@/styles/globals.css";
 
-const fraunces = Fraunces({
+const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
 });
 
-const inter = Inter({
+const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-body",
   display: "swap",
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-GB" className={`${fraunces.variable} ${inter.variable}`}>
+    <html lang="en-GB" className={`${sourceSerif.variable} ${manrope.variable}`} suppressHydrationWarning>
       <body>
         <PageShell>{children}</PageShell>
       </body>

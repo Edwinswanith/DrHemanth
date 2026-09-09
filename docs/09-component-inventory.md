@@ -14,7 +14,7 @@ Phase C completion.
 | Card | `components/ui/card.tsx` | **built** |
 | Badge / PendingBadge | `components/ui/badge.tsx` | **built** |
 | Accordion (FAQ) | `components/ui/accordion.tsx` | **built** |
-| Drawer | `components/ui/drawer.tsx` | **built** (hand-rolled focus trap + `inert`, no dependency added) |
+| Drawer | `components/ui/drawer.tsx` | **built** (body-level portal, hand-rolled focus trap, unmounted when closed; no dependency added) |
 | Dialog | `components/ui/dialog.tsx` | not built — no use case yet distinct from Drawer |
 | Tabs (comparison) | `components/ui/tabs.tsx` | not built — comparison shipped as an accessible `<table>` instead (see `05-seo-geo-strategy.md`); revisit only if a tabbed presentation is specifically requested |
 | Form field primitives | `components/ui/form-field.tsx` | **built** |
@@ -25,15 +25,16 @@ Phase C completion.
 | Surgeon introduction | `components/sections/surgeon-introduction.tsx` | **built** |
 | Robotic surgery introduction | `components/sections/robotic-surgery-introduction.tsx` | **built** |
 | Surgery comparison | `components/sections/surgery-comparison.tsx` | **built** |
-| Treatment explorer | `components/sections/treatment-explorer.tsx` | **built** (informational cards, deliberately not linked — see the component's own comment) |
-| Patient journey (+ "why this practice", composed) | `components/sections/patient-journey.tsx` | **built** |
-| Location overview | `components/sections/location-overview.tsx` | **built**, all 3 locations shown pending-verification |
+| Treatment explorer | `components/sections/treatment-explorer.tsx` | **built** (desktop numbered selector/detail, mobile disclosures, links to canonical treatment routes) |
+| Why patients choose | `components/sections/why-patients-choose.tsx` | **built** (evidence-led ledger, no icon cards) |
+| Patient journey | `components/sections/patient-journey.tsx` | **built** (seven-step editorial timeline) |
+| Location overview | `components/sections/location-overview.tsx` | **built** (production-safe fallback; selector/detail only for verified or explicitly staged locations) |
 | Patient stories | `components/sections/patient-stories.tsx` | **built**, honest empty/pending state — no fabricated quotes |
 | Research highlights | `components/sections/research-highlights.tsx` | **built**, honest pending state |
 | FAQ section | `components/sections/frequently-asked-questions.tsx` | **built**, process-only FAQs (no clinical-fact dependency) |
 | Final appointment CTA | `components/sections/final-appointment-cta.tsx` | **built** |
-| Appointment card (hero) | `components/appointment/appointment-card.tsx` | **built** |
-| Appointment form (shared) | `components/appointment/appointment-form.tsx` | **built** — used by hero card, mobile drawer, and `/appointments` |
+| Appointment card (hero) | `components/appointment/appointment-card.tsx` | **built**, currently not used on the homepage after the UX improvement pass |
+| Appointment form (shared) | `components/appointment/appointment-form.tsx` | **built** - used by the homepage hero, mobile drawer and `/appointments` |
 | Appointment mobile drawer | `components/appointment/appointment-mobile-drawer.tsx` | **built** |
 | Appointment success/error | `components/appointment/appointment-success.tsx`, `appointment-error.tsx` | **built** |
 | Treatment summary/options/risks/references/review-details/urgent-notice | `components/medical/*.tsx` | **built** — first used by `/treatments/hernia-surgery`; content is `requires-clinical-review`, not yet approved, so the route is `noindex` |

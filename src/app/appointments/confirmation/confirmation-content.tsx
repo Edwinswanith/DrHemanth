@@ -14,8 +14,8 @@ function ConfirmationInner() {
       <div>
         <h1 className="mb-3">No active confirmation</h1>
         <p className="mb-6 max-w-xl text-ink-700">
-          We couldn&rsquo;t find a recent appointment request reference. If you&rsquo;ve just
-          submitted a request, please check your email for confirmation, or submit a new request below.
+          We couldn&rsquo;t find a recent appointment request reference. If you need to contact the practice
+          again, please submit a new request below.
         </p>
         <LinkButton href="/appointments">Request an Appointment</LinkButton>
       </div>
@@ -34,7 +34,7 @@ function ConfirmationInner() {
 
 export function ConfirmationContent() {
   return (
-    <Suspense fallback={<p>Loading…</p>}>
+    <Suspense fallback={<p>Loading...</p>}>
       <ConfirmationInner />
     </Suspense>
   );

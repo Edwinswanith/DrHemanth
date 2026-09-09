@@ -11,7 +11,7 @@ body {
   font-family: var(--font-body);
   color: var(--color-text-primary);
   font-size: var(--text-body);
-  line-height: 1.6;
+  line-height: 1.62;
 }
 
 h1,
@@ -19,12 +19,15 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-weight: 600;
-  line-height: 1.15;
+  line-height: 1.06;
   color: var(--color-text-primary);
+  letter-spacing: 0;
 }
 
 h1 {
-  font-size: var(--text-hero);
+  font-size: min(var(--text-page-h1), 10.5vw);
+  max-width: var(--spacing-content-max);
+  overflow-wrap: anywhere;
 }
 
 h2 {
@@ -46,9 +49,8 @@ p {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
     scroll-behavior: auto !important;
   }
 }

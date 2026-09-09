@@ -1,24 +1,17 @@
 import { Section } from "@/components/ui/section";
 import { Accordion } from "@/components/ui/accordion";
-import { siteConfig } from "@/content/site";
 
 export function FrequentlyAskedQuestions() {
   const items = [
     {
-      question: "Is submitting a request the same as booking an appointment?",
-      answer: <p>{siteConfig.requestNotConfirmedNotice}</p>,
-    },
-    {
-      question: "Can I use this website in an emergency?",
-      answer: <p>{siteConfig.emergencyNotice}</p>,
+      question: "What happens after I submit an appointment request?",
+      answer: <p>The practice reviews the request and contacts you separately to discuss a suitable appointment.</p>,
     },
     {
       question: "Do I need a GP referral?",
       answer: (
         <p>
-          Referral requirements can vary by hospital, insurer, and
-          appointment type. The practice will confirm what is needed for
-          your specific situation when they contact you.
+          The practice will confirm referral requirements for your hospital, insurer and appointment type.
         </p>
       ),
     },
@@ -26,8 +19,7 @@ export function FrequentlyAskedQuestions() {
       question: "What happens to the information I submit?",
       answer: (
         <p>
-          Your information is used to arrange your appointment request and is
-          handled in line with our{" "}
+          Your details are used to handle your request. See the{" "}
           <a href="/privacy" className="underline hover:text-ink-900">
             privacy notice
           </a>
@@ -36,22 +28,36 @@ export function FrequentlyAskedQuestions() {
       ),
     },
     {
+      question: "Is surgery always recommended?",
+      answer: <p>No. Assessment, investigations, alternatives and shared decisions come before any procedure.</p>,
+    },
+    {
+      question: "Which treatment page should I read first?",
+      answer: <p>Start with the condition or procedure closest to your diagnosis, then use the appointment form if you need practice contact.</p>,
+    },
+    {
       question: "How is robotic surgery different from laparoscopic surgery?",
       answer: (
         <p>
-          Both use small incisions. In robotic-assisted surgery, the surgeon
-          controls specialised wristed instruments from a console; the
-          surgeon is in control throughout. See the full comparison above for
-          details.
+          Both use small incisions. Robotic instruments are console-controlled by the surgeon.
         </p>
       ),
     },
   ];
 
   return (
-    <Section id="faqs" ariaLabel="Frequently asked questions">
-      <h2 className="mb-6">Frequently asked questions</h2>
-      <Accordion items={items} />
+    <Section id="faqs" dataSection="faq" spacing="compact" ariaLabel="Frequently asked questions">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+        <div className="lg:col-span-4">
+          <p className="mb-3 text-label font-semibold uppercase tracking-wide text-steel-700">
+            Patient questions
+          </p>
+          <h2 className="text-balance">Frequently asked questions</h2>
+        </div>
+        <div className="lg:col-span-8">
+          <Accordion items={items} />
+        </div>
+      </div>
     </Section>
   );
 }

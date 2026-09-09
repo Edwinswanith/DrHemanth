@@ -9,6 +9,7 @@ import { SurgeonIntroduction } from "@/components/sections/surgeon-introduction"
 import { RoboticSurgeryIntroduction } from "@/components/sections/robotic-surgery-introduction";
 import { SurgeryComparison } from "@/components/sections/surgery-comparison";
 import { TreatmentExplorer } from "@/components/sections/treatment-explorer";
+import { WhyPatientsChoose } from "@/components/sections/why-patients-choose";
 import { PatientJourney } from "@/components/sections/patient-journey";
 import { LocationOverview } from "@/components/sections/location-overview";
 import { PatientStories } from "@/components/sections/patient-stories";
@@ -32,6 +33,7 @@ export default function HomePage() {
       <RoboticSurgeryIntroduction />
       <SurgeryComparison />
       <TreatmentExplorer />
+      <WhyPatientsChoose />
       <PatientJourney />
       <LocationOverview />
       <PatientStories />

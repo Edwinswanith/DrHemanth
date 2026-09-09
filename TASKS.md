@@ -11,7 +11,7 @@ verification command has actually been run in this session.
 | B | Architecture, appointment operations, data-protection decisions | **done (docs-level) — see open client items below** |
 | C | Design system + homepage frontend (scope-limited routes) | **done** |
 | D | Production appointment integration | dev-adapter flow built and tested end-to-end in Phase C; blocked on Phase B open client items for a real provider/DB |
-| E | SEO migration + approved content routes | **in progress** — 3 of 7 treatment categories built |
+| E | SEO migration + approved content routes | **in progress** — 7 of 7 canonical treatment categories built, plus `/qualifications-and-memberships`; `/about` and other non-treatment routes and redirects remain |
 | F | Production-readiness verification + deployment | not started |
 
 Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-lead-snoopy-toast.md` (approved plan), mirrored into `docs/decisions/ADR-001..005`.
@@ -112,17 +112,29 @@ Full acceptance criteria per phase: `C:\Users\bizzz\.claude\plans\you-are-the-le
   Full suite re-run clean: 173/173 Playwright tests, 15/15 Vitest tests,
   typecheck/lint/build all pass. Verified visually in a real browser.
 
-**Remaining Phase E work:** the same pattern (fresh, sourced, reviewer-
-screened content; noindex until clinical sign-off) for the other 4
-treatment categories (Upper GI endoscopy, anti-reflux surgery, liver &
-spleen surgery, appendicectomy), then the robotic surgery hub,
-robotic-vs-laparoscopic comparison, About, locations, and legal-page
-rewrites — see `docs/02-information-architecture.md` for the full route
-list. Also outstanding: a proper internal-linking pass once more pages
-exist (e.g. gallbladder surgery's `alternatives` field mentions bile duct
-exploration only as plain text, not yet a real link — worth doing as one
-pass across all pages rather than piecemeal). None of this is blocked on
-the client; it can continue in parallel with the Phase B/D items below.
+- [x] `/treatments` hub plus the remaining 4 canonical treatment pages
+  built: `/treatments/upper-gi-endoscopy`,
+  `/treatments/anti-reflux-surgery`,
+  `/treatments/liver-and-spleen-surgery`, and
+  `/treatments/appendicectomy`. These consolidate 17 additional old URLs
+  from the refreshed 98-URL crawl, use the shared 13-part treatment-page
+  renderer, are linked from the homepage treatment explorer, and remain
+  `noindex` / `requires-clinical-review`. Verification run clean:
+  `npm run typecheck`, `npm run lint`, `npm run build`, `npm run test`,
+  `npm run test:e2e` (261 passed, 11 expected viewport-conditional skips),
+  plus `check:links`, `check:metadata`, `check:structured-data`, and
+  `check:redirects` readiness.
+
+**Remaining Phase E work:** the 7 canonical treatment categories and the
+`/treatments` hub now exist as real, noindexed review routes. Still
+outstanding: clinical sign-off for treatment content, redirects/410s from
+the refreshed 98-URL inventory, a full internal-linking pass, and the
+non-treatment routes (`/about`, `/robotic-surgery`,
+`/robotic-vs-laparoscopic`, locations, patient information,
+research/publications, reviews, contact, terms). Several of those remain
+blocked on client or clinical confirmation; see
+`docs/02-information-architecture.md` and
+`docs/04-content-verification.md`.
 
 ## Cross-cutting: motion/visual polish (client-requested)
 
@@ -159,6 +171,47 @@ style. Delivered:
   `docs/04-content-verification.md` as a stronger (but still not
   publishable-as-fact) source than what was there before.
 
+## Homepage UX improvement pass (client-requested)
+
+- [x] P0 audit blockers addressed: mobile menu panel has real height and focus handling; appointment drawer is body-portalled, unmounted when closed, keyboard-trapped, and no longer clipped by the hero; mobile appointment flow no longer has the persistent action bar covering fields.
+- [x] High-impact visual refinements shipped across hero, trust/profile, robotic surgery, comparison, treatment directory, patient journey, locations, stories, research, FAQ, final CTA, footer spacing, and form accessibility.
+- [x] Verification after implementation: `npm run typecheck`, `npm run lint`, `npm run test`, `npm run test:e2e` all pass; final post-change screenshot/axe artifacts captured at `audit-artifacts/homepage-ux-after-final-2026-09-01/`.
+- [ ] Still below world-class: no approved portrait/clinical imagery, many professional/location/story/research details remain pending verification, and non-treatment migration routes/redirects are not complete.
+
+## Data-protection incident and fix (2026-09-02)
+
+Client asked for the featured "greeting card" image removed from the patient
+feedback archive and for names to be masked. Checking the underlying images
+before touching anything found a real problem larger than the original ask:
+
+- [x] Sample-checked 6 of the 105 scans behind `/patient-feedback`'s full
+  archive gallery — 4 had a real patient's full name visible (one also had
+  an NHS number), despite every single caption in the code claiming
+  "personal details withheld."
+- [x] Withdrew the entire gallery rather than spot-fixing: removed the
+  `PatientFeedbackRail`/archive-gallery section from
+  `src/app/patient-feedback/page.tsx`, deleted the now-unused
+  `src/components/sections/patient-feedback-rail.tsx`, and removed the
+  `completeFeedbackArchiveImages` export from `src/content/patient-feedback.ts`.
+- [x] Moved all 105 source files from `public/images/patient-feedback/archive/`
+  (publicly servable by direct URL regardless of whether a page linked them)
+  to `_unpublished-review/patient-feedback-archive-UNREVIEWED/`, outside
+  `public/`, so they're no longer reachable.
+- [x] Separately spot-checked the smaller, currently-unused curated set
+  (`feedbackArchiveImages`/`homepageFeedbackImages`, 10 images) — confirmed
+  clean (printed card fronts only, no handwriting/names).
+- [x] `docs/04-content-verification.md`'s patient-feedback-scans row updated
+  to record the incident and correct the earlier (wrong) "105 public-safe
+  scans" claim.
+- [x] Updated `tests/e2e/homepage.spec.ts` (the test asserting the 100+
+  scan gallery existed) to assert the gallery is gone and only the
+  anonymous text excerpts remain; full e2e suite (78 tests, desktop-1440),
+  Vitest (15/15), typecheck, lint, and build all re-run clean afterward.
+- [ ] **Not done yet, needs a human:** every one of the 105 quarantined
+  scans needs individual review/redaction (crop or blur any name, NHS
+  number, address, or signature) before any of this content can be
+  re-published. Only 6 of 105 were actually inspected in this pass.
+
 ## Known verification items (growing list — see docs/04-content-verification.md for the full tracked version)
 
 - GMC number, exact canonical title, "Clinical Professor" claim — unverified
@@ -166,23 +219,328 @@ style. Delivered:
 - Per-location current-practice status, hours, parking/transport/accessibility — unverified
 - Testimonial consent/attribution for the 3 currently published — unverified
 - Post-op instructions content contains orthopaedic boilerplate — confirmed defect, requires full clinical rewrite, will not be migrated as-is
+- Global keyboard focus-ring colour fails 3:1 contrast (SC 1.4.11) against `tone="dark"` section backgrounds sitewide — found 2026-09-02 via the `/qualifications-and-memberships` accessibility review, not axe-detectable, needs a dedicated design-token fix; see `docs/14-accessibility-checklist.md`
+
+## `/qualifications-and-memberships` built (2026-09-02)
+
+- [x] Fetched the old bio page's accordion content directly from raw HTML
+  (not just an AI-summarised fetch) and cross-checked the two extraction
+  methods against each other, including the GMC reference number, before
+  using any of it — see `docs/04-content-verification.md`.
+- [x] `/about` itself is still blocked (canonical-title decision unresolved,
+  per `docs/02-information-architecture.md`) — did not build it. Built only
+  `/qualifications-and-memberships`, which was already split out in the IA
+  specifically because it carries none of the disputed title language.
+- [x] Extended `qualificationsPageContentSchema` in `src/lib/content/schema.ts`
+  and added `src/content/qualifications.ts` — every fact wrapped `pending()`
+  per the existing `surgeon.ts` pattern, tier "unverified."
+- [x] Reused existing `surgeonProfile.professionalMemberships` and
+  `.gmcNumber` rather than introducing a second, conflicting memberships
+  list — the old site itself has two different membership lists across two
+  accordion sections; this page doesn't reproduce that inconsistency.
+- [x] GMC number stays withheld (only "pending registration" is shown, not
+  the number itself) — kept the existing `surgeon.ts` precedent rather than
+  changing it silently.
+- [x] Deliberately excluded "Awards received: Clinical excellence awards
+  for the trust" — no award name/year/issuing body published, too vague to
+  render without inventing specificity.
+- [x] Route built, robots `noindex`, linked from the homepage
+  surgeon-introduction section and the footer. Added to
+  `check-metadata.mjs`, `check-structured-data.mjs`,
+  `tests/accessibility/wcag.spec.ts`, `tests/e2e/responsive-layout.spec.ts`,
+  plus a dedicated `tests/e2e/qualifications-and-memberships.spec.ts` (4
+  tests: reachability, section/pending-status visibility, no dead links,
+  noindex).
+- [x] Full verification re-run clean: typecheck, lint, Vitest (15/15),
+  Playwright desktop-1440 (85 passed, 3 skipped), `check:metadata`,
+  `check:structured-data`, `check:links`, axe accessibility scan on the new
+  route.
+- [x] Sent to the `medical-content-reviewer` and `accessibility-reviewer`
+  agents for independent review before calling this done. Both came back
+  with real findings, addressed:
+  - **Medical:** page had no `reviewMeta`/status field (every other medical
+    page has one) — added, rendered via the existing `MedicalReviewDetails`
+    component. "Clinical Professor" sat in the same visually-identical grid
+    as verified-style postgraduate degrees — moved to its own separately
+    captioned `disputedListedTitle` field. Its awarding-body placeholder
+    text rendered on the live page as if it were a real institution name —
+    removed. AUGIS appeared twice (membership + a 2018 "position") with no
+    reconciling note — added one. MS (General Surgery) attributed to two
+    different institution names across two fields on the same page —
+    flagged for clinical review rather than silently resolved. Also added
+    a row to `docs/04-content-verification.md`'s "Pages awaiting clinical
+    sign-off" table, which this page had been missing from.
+  - **Accessibility:** zero axe violations across all 4 viewports plus an
+    unfiltered full-tag scan. Found and fixed a real sitewide bug: shared
+    `LinkButton` component applied its focus-ring classes to an inert inner
+    `<span>` that can never receive focus (dead code) — moved onto the
+    actual focusable element. Added unique screen-reader text to repeated
+    "View source" publication links and a visually-hidden "opens in a new
+    tab" note. Also found and logged (not fixed — pre-existing, sitewide,
+    needs its own dedicated pass) a real gap: the global focus-ring colour
+    is under 3:1 contrast against dark-toned sections — see
+    `docs/14-accessibility-checklist.md`.
+- [x] Re-verified after fixes (the `LinkButton` change is sitewide): full
+  Playwright suite across all 4 viewports (323 passed, 13 expected skips),
+  Vitest (15/15), typecheck, lint, build, axe scan (all built routes),
+  `check:metadata`, `check:structured-data`, `check:links` — all clean.
+
+## Six-section redesign pass (client-requested, 2026-09-03)
+
+Client flagged six sections as feeling template-generated: homepage hero,
+robotic surgery chapter, treatments index, locations experience, surgeon
+profile, patient journey. Baseline: commit `94f9cd5` (working tree already
+had substantial uncommitted Phase E work on top of it — recorded as-is, not
+reset). Implemented in place, same token/typography system throughout, no
+header/footer/appointment-API changes.
+
+- [x] **P0 content-safety fix**: `src/app/treatments/page.tsx` was rendering,
+  verbatim, "These pages consolidate overlapping treatment and condition
+  pages from the old website... remains noindexed until the clinical review
+  gate is complete" directly to patients — removed. Found two more leaks the
+  client's own examples didn't name: `content/treatments/liver-and-spleen-surgery.ts`'s
+  rendered `summary` field ("...from the old website...") and 8 `alt` strings
+  across `treatment-explorer.tsx`/`location-overview.tsx` ("...illustration/
+  source image from the existing/old website") — all rewritten to real
+  patient-facing copy/alt text, no new clinical claims introduced.
+- [x] **Hero**: collapsed 3 competing appointment entry points to 1 (removed
+  the hero's own duplicate "Request an Appointment" button; `AppointmentCard`
+  is now the sole desktop entry point, mobile drawer the sole entry point
+  below `lg`); portrait integrated beside the identity block at ~44% width
+  with a single border (removed the double-frame); fixed a real LCP bug (the
+  portrait `<Image>` had a non-standard `preload` prop that does nothing —
+  added the real `priority` prop).
+- [x] **Robotic surgery chapter**: video enlarged to be the section's actual
+  visual anchor (was `lg:col-span-4`, now `lg:col-span-7` with the 3-stage
+  process integrated directly beneath it, not a disconnected aside); fixed a
+  real bug where the evidence band was `lg:grid-cols-4` for only 3 items,
+  leaving an empty cell.
+- [x] **Treatments index**: replaced the 3-card grid (7 items → an orphaned
+  final row) with a grouped editorial row list (5 clinical-area groups, fine
+  rules not cards) — matches the brief's suggested grouping against the
+  confirmed 7 treatments, no new clinical claims.
+- [x] **Locations**: replaced the `aria-pressed` button pattern with a real
+  `role="tablist"`/`role="tab"`/`role="tabpanel"` implementation with
+  roving-tabindex arrow-key navigation; migrated the 3 hardcoded locations
+  (plus fees/general email) into `src/content/locations.ts` + a new
+  `locationSchema` in `src/lib/content/schema.ts`, fixing a real
+  architecture-rule gap (this data had never been in `src/content/`).
+  Rebuilt the detail panel so image+name+address form one composed unit and
+  the longer operational details (hours/contact/fees/directions) run full
+  width below — the first version of this fix left a large empty column
+  under the image relative to the (much taller) full info block; caught via
+  screenshot inspection and corrected before reporting completion.
+- [x] **Surgeon profile**: removed the two clearest internal-language
+  sentences in the whole codebase ("This site introduces...", "The homepage
+  helps patients choose the next step...") — replaced with
+  `surgeonProfile.positioningStatement`, an already-approved, non-gated
+  sentence that existed in content but had never actually been rendered
+  anywhere. Since almost every other `surgeonProfile` field is `pending()`
+  (no real verified-fact ledger exists to display), built a category list
+  ("Surgical qualifications" / "NHS consultant role" / "Professional
+  memberships") linking to `/qualifications-and-memberships` instead of
+  fabricating a verified-looking ledger. Added a token-only "HS" signature
+  panel as the visual anchor (no second photo exists; reusing the hero photo
+  again on the same page was rejected as repetitive — confirmed with the
+  user via `AskUserQuestion`). Independent review caught a real mobile
+  reading-order defect (the signature panel appeared before the section's
+  own heading) — fixed by moving the eyebrow/h2 above the two-column split
+  so it reads first at every width.
+- [x] **Patient journey**: fixed a real bug — the 4+3 step grid only reached
+  a clean split at `xl` (1280px); at `lg` (1024–1279px) it was 3+3+1 with an
+  orphan cell. Rebuilt as an explicit `lg:grid-cols-12` layout (spans 3×4 +
+  4×3) so the two-row split is correct from 1024px up.
+- [x] Added 2 new keyboard-navigation e2e tests (location tabs arrow-key
+  operation + panel update; treatments row keyboard activation) and updated
+  3 existing tests whose assertions no longer matched the intentionally
+  redesigned markup (`role="button"` → `role="tab"` for locations; the
+  video-vs-hero-appointment-card size comparison, which doesn't hold once
+  the video is deliberately the larger visual anchor of its own section, was
+  replaced with a real invariant — video ≥ portrait width, video fits inside
+  and is a substantial share of its own section).
+- [x] Full verification re-run clean after every section and again at the
+  end: `npm run typecheck`, `npm run lint`, `npm run build`, `npm run test`
+  (15/15), `npm run test:e2e` (331 passed, 13 expected viewport-conditional
+  skips), `check:metadata`, `check:structured-data`, `check:links` — all
+  against the production build, all clean. Zero horizontal overflow at any
+  of the 19 inspected widths (320–1920px), before or after.
+- [x] Before/after screenshots captured at all 9 required viewports for
+  both the homepage and `/treatments` — `artifacts/section-redesign/before/`
+  and `.../after/` (via `scripts/measure-scroll-density.mjs --screenshots=true`).
+- [x] Independent visual-quality review run against the before/after
+  screenshots by a separate agent with no code access (site-wide score
+  4/10 → 7/10). Two of its "bugs" (a clipped locations heading, a
+  mobile-button/sticky-bar overlap) were investigated and confirmed to be
+  artifacts of oversized single-element debug screenshots, not real
+  defects — verified via direct bounding-box measurement and a real
+  anchor-navigation test (104px and 431px actual clearance respectively).
+  Its reading-order finding on the surgeon-profile section was real and was
+  fixed (see above). Its "essentially unchanged" note on the robotic-surgery
+  and patient-journey sections reflects that those two were intentionally
+  the most restrained edits (bug fixes + one enlarged element, not a visual
+  overhaul) — consistent with the brief's own instruction not to redesign
+  every section identically.
+- [ ] **Not done / needs the client**: no dedicated robotic-surgery photo
+  exists (only the YouTube video still); Wellington Hospital has no location
+  photo; every `surgeonProfile` gated fact and all three locations' "confirm
+  current before launch" status remain open per
+  `docs/04-content-verification.md`; several copy tweaks the brief suggested
+  as optional (robotic-surgery heading wording, "About Prof. Hemant Sheth"
+  eyebrow, "From enquiry to follow-up" heading trim) were applied as
+  low-risk structural polish, not clinical claims, but were not routed
+  through a human editorial sign-off step since none exists in this tool.
+
+## "Porcelain Clinical Teal" theme refinement (client-requested, 2026-09-03)
+
+Client provided an approved semantic colour palette and asked for a
+light-dominant conversion of the whole site (not layout/content changes).
+Baseline: same working tree as the redesign pass above, captured separately
+in `artifacts/theme-refinement/before/`.
+
+- [x] Rewrote `src/styles/tokens.css`: every existing colour scale (ink,
+  stone/ivory, teal, bronze, status) retoned to the approved palette, plus
+  the exact approved semantic names added as aliases (`--color-page`,
+  `--color-surface`, `--color-surface-soft`, `--color-surface-warm`,
+  `--color-primary`/`-hover`/`-soft`, `--color-border`/`-strong`,
+  `--color-accent-decoration`/`-text`) so both old utility classes and the
+  new semantic ones (`bg-page`, `text-primary`, etc.) work. Existing
+  components needed no rename to inherit the new palette.
+- [x] Sitewide hardcoded-colour audit (hex/rgb/hsl/inline styles/arbitrary
+  Tailwind colour values): found only `tokens.css` itself (expected) and
+  `src/app/icon.tsx` (the favicon generator, which runs outside the DOM/CSS
+  cascade via `next/og` — literal hex there is a documented, unavoidable
+  exception, retoned to match). No other hardcoded colour existed anywhere
+  in `src/`.
+- [x] Found and fixed a real pre-existing bug while auditing: `patient-stories.tsx`
+  referenced `text-bronze-300`/`bg-bronze-300`, but `--color-bronze-300` had
+  never been defined — those classes silently generated no CSS. Added the
+  missing scale step.
+- [x] Reduced dark-tone sections from 3 (`robotic-surgery-introduction`,
+  `final-appointment-cta`, plus a page-local dark CTA on
+  `/qualifications-and-memberships`) to 0 — all converted to the `accent`
+  (pale teal) tone per the brief, so the **footer is now the only dark
+  section sitewide**. Robotic surgery keeps one genuinely opaque dark zone
+  around the video itself (`bg-ink-950`, not a translucent tint) as the
+  brief's "controlled dark subsection" allowance.
+- [x] Button component: primary hover/active now uses the approved
+  `--color-primary-hover` token instead of jumping to dark ink; "secondary"
+  variant changed from an ink-outlined to a teal-outlined button (matching
+  the brief's "outlined secondary action" language), used consistently
+  sitewide.
+- [x] Comparison tables (homepage + `/robotic-vs-laparoscopic`): dark
+  `bg-ink-900` header row replaced with a light pale-teal header; added
+  explicit pale-teal (robotic) vs warm-neutral (laparoscopic) column
+  backgrounds on both the desktop table and the mobile stacked layout — no
+  green/red winner framing existed before or after.
+- [x] Section-by-section application per the brief: header→white,
+  trust-evidence→pale teal, comparison→white, treatments→porcelain +
+  pale-teal hover (previously `hover:bg-stone-50` was invisible against the
+  section's own porcelain background — a real, previously-unnoticed dead
+  hover state, now fixed), patient-journey→warm limestone + teal
+  progression line, locations→white main surface with a pale-teal selector
+  panel and a real white "selected chip" + teal left-indicator (previously
+  the tabs had no visible selected-state affordance beyond text weight),
+  FAQ→porcelain with a white expanded-accordion panel, final-cta→pale teal.
+- [x] Bronze usage reduced to a single genuine accent (the footer's
+  emergency notice) — the ~10 other left-border "editorial rule" usages
+  sitewide were left as-is where outside this pass's named sections (already
+  token-based, not hardcoded) but converted to a neutral `border-strong` on
+  the homepage's own repeated sections, where 5–6 uses in one scroll would
+  have read as more than the approved "max ~2%".
+- [x] **Real accessibility regression caught and fixed**: the approved
+  `--color-text-muted` (#5D7075) is lighter than the value it replaced, and
+  fails 4.5:1 against the pale-teal `accent` background (axe: 4.19:1) and
+  sits at a razor-thin 4.57:1 against the warm-limestone `sunken`
+  background. Fixed by using the default (not muted) text tier wherever
+  secondary/note text sits on a tinted section background (robotic-surgery
+  caption, research-highlights, treatment-explorer, trust-evidence-strip,
+  qualifications-and-memberships — 11 call sites total). Also fixed
+  `PendingBadge`'s warning-on-warning-tint contrast (was 4.42:1): kept the
+  approved `--color-warning` literal value unchanged and lightened only the
+  (unspecified-by-brief) `-100` tint instead, restoring ~4.8:1.
+- [x] Full verification re-run clean after fixes: `npm run typecheck`,
+  `npm run lint`, `npm run build`, `npm run test` (15/15), `npm run test:e2e`
+  (331 passed, 13 expected skips — includes axe colour-contrast across every
+  route, keyboard navigation, the full appointment flow, and the new
+  location-tab/treatment-row keyboard tests from the redesign pass above),
+  `check:metadata`, `check:structured-data` — all clean. Zero horizontal
+  overflow at all 19 inspected widths, before or after; section heights
+  essentially unchanged (colour-only pass, no layout regression).
+- [x] Before/after screenshots at all 9 required viewports, homepage +
+  `/treatments` — `artifacts/theme-refinement/before/` and `.../after/`.
+- [ ] Not independently re-reviewed by a separate agent this pass (the prior
+  redesign pass's independent review stands for layout/IA; this pass is
+  colour-system-only and was verified via axe + direct visual inspection
+  instead).
+
+## "Oxford Navy and Porcelain" colour migration (client-requested, 2026-09-03)
+
+Client replaced the just-shipped teal palette with a new approved navy/steel
+palette and explicitly required removing all green/teal/mint/sage branding —
+not a retone of the same family, a full colour-system swap. Baseline: same
+tree as the "Porcelain Clinical Teal" pass above;
+`artifacts/navy-migration/before/` = that pass's final screenshots (accurate
+before-state, no other changes happened between the two tasks).
+
+- [x] **Scale rename, not a blind retone**: renamed the `--color-teal-*`
+  scale to `--color-steel-*` in `tokens.css` (new hexes) and did a literal,
+  reviewed `teal-` → `steel-` rename across all 30 `.tsx` files that
+  referenced it — every numbered step keeps the exact semantic role it had
+  before (700=primary, 800=primary-hover, 100=primary-soft, 050=surface-soft),
+  so the rename carries zero re-interpretation risk. `grep -ri
+  "teal|green|mint|sage|emerald"` across `src/` now returns zero real hits
+  (only the migration-record comment in `tokens.css` and false-positive
+  substring matches inside the word "message").
+- [x] **Caught and fixed a real regression from the rename**: `utilities.css`
+  and `globals.css` — including the **global `:focus-visible` outline rule**
+  — still referenced `var(--color-teal-700)`, a variable the rename had just
+  deleted. Found via a full-codebase grep, not by the test suite (a broken
+  CSS custom property doesn't error, it just silently drops the declaration).
+  Fixed before any test ran.
+- [x] **Mandatory green-to-blue fix**: `--color-success` (a literal green,
+  #2f6b52) removed from the token system entirely — its only two usages
+  (`AppointmentSuccess`) now use the primary steel-blue system
+  (`border-primary/30 bg-primary-soft`) plus a new explicit check-icon SVG,
+  per "do not rely on colour alone to communicate success."
+- [x] **Structural reversal**: Robotic Surgery reverted from the previous
+  pass's light "accent" tone back to `tone="dark"` (Oxford navy background,
+  porcelain/powder-blue on-dark text hierarchy) per this brief's explicit
+  "preserve the high-contrast chapter" requirement — the opposite of what
+  the prior brief asked for. Comparison table/columns: found and fixed a
+  real "visual winner" defect — the robotic column's label was steel-blue
+  while the laparoscopic column's was bronze, an unequal-emphasis pairing
+  the new brief explicitly forbids; both now render in the same neutral
+  ink, differentiated only by the (equal-weight) column background tint.
+  Fixed identically in both `surgery-comparison.tsx` (homepage) and the
+  standalone `/robotic-vs-laparoscopic` page.
+- [x] **Real, sitewide accessibility regression found via axe and fixed**:
+  the approved `--color-text-muted` (#667680) fails 4.46:1 against the
+  approved `--color-page` (#F8F9FB) — a hairline miss that broke
+  `Breadcrumbs` (rendered on nearly every route) plus 6 other call sites
+  sitewide (`FormField` hints, `risk-information`, `location-overview`,
+  `patient-feedback-preview`, and a `qualifications-and-memberships` lede
+  paragraph using the generic `text-text-secondary` alias, which a raw
+  `text-ink-600` grep missed on the first pass). Fixed by using the default
+  text tier for all of these; left the two call sites confirmed (by
+  contrast calculation) to sit on plain white, where the pairing passes at
+  ~4.7:1.
+- [x] Full verification re-run clean: `npm run typecheck`, `npm run lint`,
+  `npm run build`, `npm run test` (15/15), `npm run test:e2e` (331 passed,
+  13 expected skips — axe colour-contrast across every route, keyboard nav,
+  full appointment flow including the new success state), `check:metadata`,
+  `check:structured-data` — all clean. Zero horizontal overflow at all 19
+  inspected widths; section heights identical before/after (colour-only
+  pass, confirmed no layout regression).
+- [x] Before/after screenshots at all 9 required viewports, homepage +
+  `/treatments` — `artifacts/navy-migration/before/` and `.../after/`.
 
 ## Next task
 
-Continue Phase E: build the next treatment category using the same
-pattern now established by hernia surgery, gallbladder surgery, and bile
-duct exploration (content file in `src/content/treatments/`, validated by
-`treatmentContentSchema`, route under `src/app/treatments/[slug]/`,
-reused `components/medical/*` — including `riskStatisticsNote` on
-`RiskInformation` if the page cites specific numeric rates,
-`medical-content-reviewer` screening pass, `noindex` until clinical
-sign-off, linked from `TreatmentExplorer`, add the new slug to
-`tests/e2e/treatment-page.spec.ts`'s data table and the axe/metadata/
-structured-data/responsive-layout route lists). Suggested next:
-liver-and-spleen surgery (9 old URLs, the largest remaining cluster,
-though it's a more heterogeneous topic — benign liver disease, splenectomy,
-and liver cancer information all need care — consider whether it should
-be one page or split).
+Continue Phase E with non-treatment migration routes and redirect
+implementation. `/about` remains blocked on the canonical-title decision.
+Do not publish final title, GMC number, academic-title, NHS-role,
+location-hours, testimonial, or robotic-personal-role claims until the
+verification rows in `docs/04-content-verification.md` are resolved.
 
 Still genuinely blocked on the client (not Claude's to resolve): the Phase
 B appointment-operations/legal gate (`docs/10-appointment-flow.md`,

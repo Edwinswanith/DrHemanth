@@ -5,10 +5,10 @@ content clears verification) · **documented only** (not yet a route).
 
 ## Header navigation
 
-Logo/name · Robotic Surgery · Treatments · Robotic vs Laparoscopic · About ·
-Locations · Patient Information · Research and Media · **Book an
-Appointment** (primary CTA). Mobile: persistent Call + Request Appointment
-actions, non-obscuring.
+Logo/name, Robotic Surgery, Treatments, About, Locations, Patient Information,
+and **Request an Appointment** as the primary CTA. Mobile keeps the surgeon
+name visible, provides one menu trigger, one appointment action, and the
+persistent Call + Request Appointment actions outside appointment-flow pages.
 
 ## Route map
 
@@ -24,15 +24,15 @@ actions, non-obscuring.
 | `/robotic-vs-laparoscopic` | (none — new) | Phase E | |
 | `/laparoscopic-surgery` | `services-...`, `laparoscopic-surgery-general-...` | Phase E | |
 | `/about` | `dr-hemant-sheth-...` | Phase E | Blocked on canonical-title approval (see `04-content-verification.md`) |
-| `/treatments` | `services-...` | Phase E | Hub page |
-| `/treatments/upper-gi-endoscopy` | GERD/upper-gi-endoscopy/achalasia cluster | Phase E | Merges 4 old URLs |
-| `/treatments/anti-reflux-surgery` | GERD/anti-reflux/hiatal-hernia cluster | Phase E | |
+| `/treatments` | `services-...` | **built** (Phase E) | Hub page. `noindex` while treatment content awaits clinical sign-off. |
+| `/treatments/upper-gi-endoscopy` | upper-gi-endoscopy/upper-GI-disease/achalasia cluster | **built** (Phase E) | Merges 4 old URLs. `noindex`, `requires-clinical-review`. |
+| `/treatments/anti-reflux-surgery` | GERD/anti-reflux cluster | **built** (Phase E) | Merges 2 old URLs. `noindex`, `requires-clinical-review`. |
 | `/treatments/gallbladder-surgery` | cholecystectomy/gallstones cluster | **built** (Phase E started) | Merges 5 old URLs. `noindex`, `requires-clinical-review` — same pattern as hernia surgery below. |
 | `/treatments/bile-duct-exploration` | CBD/ERCP/choledocholithiasis cluster | **built** (Phase E started) | Merges 4 old URLs. `noindex`, `requires-clinical-review`. Higher-stakes than the other two pages built so far — ERCP carries a real, small mortality risk from severe pancreatitis, stated precisely (not softened) with an inline attribution note clarifying the cited rates are general NHS-published figures, not Prof. Sheth's personal outcomes (added after a medical-content-reviewer pass flagged the ambiguity). |
 | `/treatments/hernia-surgery` | 10-URL hernia cluster | **built** (Phase E started) | Largest consolidation — see audit. Route is live but `noindex`: content is freshly written and NHS-sourced, screened by the medical-content-reviewer agent, but still `requires-clinical-review` — not yet approved by Prof. Sheth. First real use of the `components/medical/*` set. |
-| `/treatments/liver-and-spleen-surgery` | HPB/liver/splenectomy cluster | Phase E | Merges 9 old URLs |
-| `/treatments/appendicectomy` | appendectomy cluster | Phase E | |
-| `/qualifications-and-memberships` | part of bio page | Phase E | Split out of `/about` for scannability |
+| `/treatments/liver-and-spleen-surgery` | HPB/liver/splenectomy cluster | **built** (Phase E) | Merges 9 old URLs. `noindex`, `requires-clinical-review`; cancer/current-service-line wording needs especially careful review. |
+| `/treatments/appendicectomy` | appendectomy cluster | **built** (Phase E) | Merges 2 old URLs. `noindex`, `requires-clinical-review`. |
+| `/qualifications-and-memberships` | part of bio page | **built** (Phase E) | Split out of `/about` for scannability — `/about` itself stays blocked on canonical-title approval, but this page carries none of that disputed title language. `noindex`, all facts `pending` (old-site-sourced, unverified). GMC registration number deliberately withheld (only the fact of a pending registration is shown), per the existing precedent in `src/content/surgeon.ts`. |
 | `/research-publications` | `research-and-publications-...` | Phase E | Currency check required |
 | `/patient-reviews` | testimonials + 13 survey-permalink URLs | Phase E | Blocked on consent verification |
 | `/patient-information` | `patient-resources-...`, `useful-links-...` | Phase E | Hub |

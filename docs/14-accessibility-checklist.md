@@ -35,14 +35,45 @@ Status as of Phase C completion (routes covered: `/`, `/appointments`,
       enforced on all interactive controls).
 - [x] `prefers-reduced-motion` respected (`typography.css` global rule +
       the design system's <250ms opacity/transform-only motion policy).
-- [x] No information conveyed by colour alone (pending-verification badges
-      carry text, not just colour; form errors carry text, not just a red
-      border).
+- [x] No information conveyed by colour alone (non-public review badges carry
+      text when explicitly enabled in staging; form errors carry text, not
+      just a red border).
 - [ ] Video/audio captions and transcripts — no video/audio content exists
       yet (Phase E, `/videos-media`); revisit when it's added.
 - [x] Zero critical/serious axe violations across all 5 built routes,
       confirmed by `npx playwright test tests/accessibility/` (also run as
       part of the full suite — see `TASKS.md` Phase C).
+
+## `/qualifications-and-memberships` accessibility review (2026-09-02)
+
+An `accessibility-reviewer` pass (axe run across all 4 required viewports
+plus an unfiltered full-tag ad-hoc scan) found **zero axe violations of any
+severity** on this route. It also found two real issues, one fixed
+immediately and one logged as pre-existing sitewide tech debt:
+
+- [x] **Fixed:** `LinkButton` (`src/components/ui/button.tsx`) applied its
+  `focus-visible:*` classes to an inert inner `<span>` that can never
+  receive focus — dead code. The visible focus ring users actually saw came
+  entirely from an unrelated global fallback rule in `globals.css`. Moved
+  the classes onto the actual focusable `<Link>`/`<a>` element. This is a
+  shared component, so the fix applies sitewide; full e2e suite (323
+  passed, 13 expected skips, all 4 viewports) and axe re-run clean
+  afterward.
+- [ ] **Not fixed — pre-existing, sitewide, needs its own pass:** the
+  global keyboard focus ring (`--color-teal-700` outline, from
+  `globals.css`) measures ≈2.32:1 against `tone="dark"` section backgrounds
+  (`--color-ink-900`), below the 3:1 SC 1.4.11 (Non-text Contrast) minimum
+  for a focus indicator. Axe does not evaluate focus-state contrast, so
+  this was not caught by any existing automated check. Reproduces on every
+  dark-toned section sitewide (footer, dark CTA sections), not just
+  `/qualifications-and-memberships` where it was found. Needs either a
+  higher-contrast focus-ring token for dark backgrounds or a design-system
+  decision, not a one-page fix.
+- Two further **recommended-but-not-required** (AAA, not AA) enhancements
+  were applied anyway on this page since they were cheap: unique
+  screen-reader text on each repeated "View source" publication link
+  (avoids indistinguishable entries in a screen-reader links list), and a
+  visually-hidden "(opens in a new tab)" note on `target="_blank"` links.
 
 ## Re-running this checklist
 

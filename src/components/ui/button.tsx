@@ -2,28 +2,27 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "reac
 import Link from "next/link";
 import { cn } from "@/lib/utils/cn";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "inverse";
 type Size = "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-(--radius-md) font-medium " +
-  "transition-colors duration-(--duration-fast) ease-(--ease-standard) " +
+  "inline-flex items-center justify-center gap-2 rounded-md text-center font-medium leading-tight " +
+  "transition-colors duration-fast ease-standard " +
   "disabled:opacity-50 disabled:pointer-events-none " +
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bronze-600";
+  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel-700";
 
 const variants: Record<Variant, string> = {
-  // bronze-700, not bronze-600, against white text: bronze-600 measures
-  // 3.99:1 (fails WCAG AA 4.5:1 for normal text) — found by the axe scan
-  // in tests/accessibility/wcag.spec.ts. bronze-700 measures 5.53:1.
-  primary: "bg-bronze-700 text-stone-50 hover:bg-bronze-800 active:bg-bronze-800",
+  primary: "bg-primary text-stone-50 hover:bg-primary-hover active:bg-ink-950",
   secondary:
-    "bg-transparent text-ink-900 border border-ink-700 hover:bg-ink-900 hover:text-stone-50 active:bg-ink-800",
+    "bg-transparent text-primary border border-primary hover:bg-primary hover:text-stone-50 active:bg-primary-hover active:border-primary-hover",
+  inverse:
+    "bg-transparent text-stone-50 border border-stone-200/80 hover:bg-stone-50 hover:text-ink-950 active:bg-stone-200",
   ghost: "bg-transparent text-ink-700 hover:bg-stone-200 active:bg-stone-300",
 };
 
 const sizes: Record<Size, string> = {
-  md: "px-5 py-2.5 text-(length:--text-body) min-h-11",
-  lg: "px-7 py-3.5 text-(length:--text-body-lg) min-h-12",
+  md: "px-5 py-2.5 text-body min-h-11",
+  lg: "px-7 py-3.5 text-body-lg min-h-12",
 };
 
 interface CommonProps {
@@ -46,21 +45,25 @@ export function Button({ variant = "primary", size = "md", className, children, 
 
 export function LinkButton({ variant = "primary", size = "md", className, children, href, ...props }: LinkButtonProps) {
   const isInternal = href.startsWith("/") || href.startsWith("#");
-  const content = (
-    <span className={cn(base, variants[variant], sizes[size], className)}>{children}</span>
-  );
+  // The visual/focus styling lives on the actual focusable element (the
+  // <Link>/<a> itself), not an inner <span> — a span can never receive
+  // focus, so focus-visible:* classes there were dead code (the visible
+  // focus ring users saw came only from an unrelated global fallback rule
+  // in globals.css). See the accessibility-reviewer finding on
+  // /qualifications-and-memberships, 2026-09-02.
+  const linkClassName = cn(base, variants[variant], sizes[size], className);
 
   if (isInternal) {
     return (
-      <Link href={href} {...props}>
-        {content}
+      <Link href={href} className={linkClassName} {...props}>
+        {children}
       </Link>
     );
   }
 
   return (
-    <a href={href} {...props}>
-      {content}
+    <a href={href} className={linkClassName} {...props}>
+      {children}
     </a>
   );
 }

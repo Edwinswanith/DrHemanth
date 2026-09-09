@@ -7,6 +7,20 @@ import { test, expect } from "@playwright/test";
  */
 const treatmentPages = [
   {
+    slug: "upper-gi-endoscopy",
+    name: "Upper GI Endoscopy",
+    linkText: /Upper GI endoscopy/,
+    firstReferenceName: "NHS - Gastroscopy",
+    firstReferenceHref: "https://www.nhs.uk/tests-and-treatments/gastroscopy/",
+  },
+  {
+    slug: "anti-reflux-surgery",
+    name: "Anti-Reflux Surgery",
+    linkText: /Anti-reflux surgery/,
+    firstReferenceName: "NHS - Heartburn and acid reflux",
+    firstReferenceHref: "https://www.nhs.uk/conditions/heartburn-and-acid-reflux/",
+  },
+  {
     slug: "hernia-surgery",
     name: "Hernia Surgery",
     linkText: /Hernia surgery/,
@@ -27,13 +41,28 @@ const treatmentPages = [
     firstReferenceName: "Guy's and St Thomas' NHS Foundation Trust — ERCP (endoscopic retrograde cholangio pancreatography)",
     firstReferenceHref: "https://www.guysandstthomas.nhs.uk/health-information/ercp-endoscopic-retrograde-cholangio-pancreatography",
   },
+  {
+    slug: "liver-and-spleen-surgery",
+    name: "Liver and Spleen Surgery",
+    linkText: /Liver & spleen surgery/,
+    firstReferenceName: "University Hospitals Plymouth NHS Trust - Liver surgery",
+    firstReferenceHref: "https://www.plymouthhospitals.nhs.uk/display-pil/pil-liver-surgery-7660/",
+  },
+  {
+    slug: "appendicectomy",
+    name: "Appendicectomy",
+    linkText: /Appendicectomy/,
+    firstReferenceName: "NHS - Appendicitis",
+    firstReferenceHref: "https://www.nhs.uk/conditions/appendicitis/",
+  },
 ];
 
 for (const treatment of treatmentPages) {
   test.describe(`${treatment.name} treatment page`, () => {
     test("is reachable from the homepage treatment explorer and renders the full 13-part shape", async ({ page }) => {
       await page.goto("/");
-      await page.getByRole("link", { name: treatment.linkText }).click();
+      await page.getByRole("button", { name: treatment.linkText }).first().click();
+      await page.getByRole("link", { name: treatment.linkText }).first().click();
       await expect(page).toHaveURL(new RegExp(`/treatments/${treatment.slug}$`));
 
       await expect(page.getByRole("heading", { level: 1, name: treatment.name })).toBeVisible();
@@ -41,7 +70,7 @@ for (const treatment of treatmentPages) {
       await expect(page.getByRole("heading", { name: "Symptoms and reasons for referral" })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Treatment options" })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Risks and possible complications" })).toBeVisible();
-      await expect(page.getByRole("heading", { name: "Recovery" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Recovery", exact: true })).toBeVisible();
       await expect(page.getByLabel("Urgent warning signs")).toBeVisible();
       await expect(page.getByRole("heading", { name: "Frequently asked questions" })).toBeVisible();
       await expect(page.getByRole("heading", { name: "Sources and further reading" })).toBeVisible();

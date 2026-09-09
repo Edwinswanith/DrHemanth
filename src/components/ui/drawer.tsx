@@ -1,15 +1,20 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
-import { cn } from "@/lib/utils/cn";
+import { useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
-/**
- * A bottom-sheet drawer with a hand-rolled but real focus trap: focus
- * moves into the drawer on open, Escape closes it, Tab/Shift+Tab wrap
- * within the drawer's focusable elements, and focus returns to the
- * trigger on close. No dependency added for this — see
- * .claude/rules/architecture.md ("keep dependencies minimal").
- */
+function subscribeToClientReady() {
+  return () => {};
+}
+
+function getClientSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 export function Drawer({
   open,
   onClose,
@@ -23,6 +28,7 @@ export function Drawer({
 }) {
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerFocusRef = useRef<Element | null>(null);
+  const isClient = useSyncExternalStore(subscribeToClientReady, getClientSnapshot, getServerSnapshot);
 
   useEffect(() => {
     if (open) {
@@ -35,6 +41,18 @@ export function Drawer({
 
   useEffect(() => {
     if (!open) return;
+
+    const scrollY = window.scrollY;
+    const previousBodyStyles = {
+      position: document.body.style.position,
+      top: document.body.style.top,
+      width: document.body.style.width,
+      overflow: document.body.style.overflow,
+    };
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -60,54 +78,45 @@ export function Drawer({
     }
 
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.position = previousBodyStyles.position;
+      document.body.style.top = previousBodyStyles.top;
+      document.body.style.width = previousBodyStyles.width;
+      document.body.style.overflow = previousBodyStyles.overflow;
+      window.scrollTo(0, scrollY);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [open, onClose]);
 
-  return (
-    <div
-      className={cn("fixed inset-0 z-[60]", open ? "pointer-events-auto" : "pointer-events-none")}
-      // `inert`, not `aria-hidden`, when closed: the form fields inside
-      // stay mounted (so the drawer opens instantly with content already
-      // there) but must not be focusable or screen-reader-reachable while
-      // closed. aria-hidden on a container that still holds focusable
-      // descendants is itself an accessibility violation (axe:
-      // aria-hidden-focus) — inert correctly removes the whole subtree
-      // from both focus and the accessibility tree.
-      inert={!open}
-    >
-      <div
-        onClick={onClose}
-        className={cn(
-          "absolute inset-0 bg-ink-950/50 transition-opacity duration-(--duration-base)",
-          open ? "opacity-100" : "opacity-0"
-        )}
-      />
+  if (!isClient || !open) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 z-[60]">
+      <div className="absolute inset-0 bg-ink-950/50" onClick={onClose} />
       <div
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label={title}
         tabIndex={-1}
-        className={cn(
-          "absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto rounded-t-(--radius-lg) bg-stone-50 p-6 shadow-(--shadow-raised) transition-transform duration-(--duration-base) ease-(--ease-standard)",
-          open ? "translate-y-0" : "translate-y-full"
-        )}
+        className="drawer-panel-in absolute inset-x-0 bottom-0 max-h-[85vh] overflow-y-auto overscroll-contain rounded-t-lg bg-stone-50 p-5 shadow-raised sm:p-6"
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-(length:--text-heading)">{title}</h2>
+          <h2 className="text-heading">{title}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="min-h-11 min-w-11 rounded-(--radius-md) text-ink-700 hover:bg-stone-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bronze-600"
+            className="min-h-11 min-w-11 rounded-md text-ink-700 hover:bg-stone-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel-700"
           >
             <span aria-hidden="true" className="text-xl">
-              ✕
+              x
             </span>
             <span className="visually-hidden">Close</span>
           </button>
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

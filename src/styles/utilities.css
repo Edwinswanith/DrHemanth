@@ -15,6 +15,12 @@
   border: 0;
 }
 
+.visually-hidden :where(input, select, textarea) {
+  min-width: 0 !important;
+  width: 1px !important;
+  max-width: 1px !important;
+}
+
 .skip-link {
   position: absolute;
   left: 1rem;
@@ -31,8 +37,100 @@
   top: 1rem;
 }
 
+.site-container {
+  width: 100%;
+  max-width: var(--layout-max);
+  margin-inline: auto;
+  padding-inline: var(--layout-gutter);
+}
+
+@media (max-width: 639px) {
+  .site-container {
+    padding-inline: clamp(1rem, 5vw, 1.25rem);
+  }
+}
+
+.layout-readable {
+  max-width: var(--layout-readable);
+}
+
+.layout-narrow {
+  max-width: var(--layout-narrow);
+}
+
 .measure {
   max-width: var(--spacing-content-max);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.text-hero {
+  font-size: var(--text-hero);
+}
+
+.text-heading {
+  font-size: var(--text-heading);
+}
+
+.text-body-lg {
+  font-size: var(--text-body-lg);
+}
+
+.text-body {
+  font-size: var(--text-body);
+}
+
+.text-small {
+  font-size: var(--text-small);
+}
+
+.text-label {
+  font-size: var(--text-label);
+}
+
+.py-section-y {
+  padding-top: var(--spacing-section-y);
+  padding-bottom: var(--spacing-section-y);
+}
+
+.py-section-compact {
+  padding-top: var(--section-space-compact);
+  padding-bottom: var(--section-space-compact);
+}
+
+.py-section-standard {
+  padding-top: var(--section-space-standard);
+  padding-bottom: var(--section-space-standard);
+}
+
+.py-section-feature {
+  padding-top: var(--section-space-feature);
+  padding-bottom: var(--section-space-feature);
+}
+
+.duration-fast {
+  transition-duration: var(--duration-fast);
+}
+
+.duration-base {
+  transition-duration: var(--duration-base);
+}
+
+.ease-standard {
+  transition-timing-function: var(--ease-standard);
+}
+
+.appointment-form-compact :where(input:not([type="checkbox"]), select) {
+  min-height: 3rem;
+  padding: 0.625rem 0.875rem;
+  font-size: var(--text-small);
+  line-height: 1.35;
+}
+
+.appointment-form-compact :where(label) {
+  font-size: var(--text-label);
 }
 
 /* Hero's one-time, on-load staggered entrance — small opacity/translate
@@ -53,4 +151,41 @@
 
 .hero-fade-up {
   animation: fade-up-in 240ms ease-out both;
+}
+
+@keyframes drawer-in {
+  from {
+    transform: translateY(1rem);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.drawer-panel-in {
+  animation: drawer-in var(--duration-base) var(--ease-standard) both;
+}
+
+.feedback-carousel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-steel-700) transparent;
+  scroll-padding-inline: 1rem;
+}
+
+.feedback-carousel-scroll::-webkit-scrollbar {
+  height: 0.5rem;
+}
+
+.feedback-carousel-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.feedback-carousel-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-steel-700);
+  border-radius: var(--radius-sm);
+}
+
+.feedback-carousel-scroll:focus-visible {
+  outline: 2px solid var(--color-steel-700);
+  outline-offset: 0.25rem;
 }

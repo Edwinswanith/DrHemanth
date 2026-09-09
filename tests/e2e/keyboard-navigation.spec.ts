@@ -40,7 +40,7 @@ test.describe("Keyboard navigation", () => {
 
   test("FAQ accordion is fully keyboard-operable and toggles aria-expanded", async ({ page }) => {
     await page.goto("/#faqs");
-    const question = page.getByRole("button", { name: "Can I use this website in an emergency?" });
+    const question = page.getByRole("button", { name: "What happens after I submit an appointment request?" });
     await question.focus();
     await expect(question).toHaveAttribute("aria-expanded", "false");
     await page.keyboard.press("Enter");
@@ -48,23 +48,45 @@ test.describe("Keyboard navigation", () => {
   });
 
   test("mobile appointment drawer traps focus and Escape closes it", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== "mobile-390", "Drawer only renders below the lg breakpoint");
+    test.skip(testInfo.project.name !== "mobile-390", "Drawer only renders at phone width");
     await page.goto("/");
     const trigger = page.getByRole("button", { name: "Request an Appointment" }).first();
     await trigger.click();
-    const dialog = page.getByRole("dialog", { name: "Request an Appointment" });
-    await expect(dialog).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "Request an Appointment" })).toBeVisible();
 
     await page.keyboard.press("Escape");
 
-    // The drawer slides off-canvas via CSS transform (so it can animate),
-    // rather than being removed via display:none, so a raw visibility
-    // check isn't the meaningful assertion here. What actually matters for
-    // accessibility — the outer wrapper becomes inert (see
-    // src/components/ui/drawer.tsx) and focus returns to the trigger — is
-    // what this asserts instead.
     await expect(trigger).toBeFocused();
-    const isInert = await dialog.evaluate((el) => el.closest<HTMLElement>("[inert]") !== null);
-    expect(isInert).toBe(true);
+    await expect(page.locator('[role="dialog"][aria-label="Request an Appointment"]')).toHaveCount(0);
+  });
+
+  test("practice location tabs are operable with arrow keys and update the detail panel", async ({ page }) => {
+    await page.goto("/#locations");
+    const firstTab = page.getByRole("tab", { name: /Spire Bushey Hospital/ });
+    const secondTab = page.getByRole("tab", { name: /The Clementine Churchill Hospital/ });
+    const panel = page.locator("#active-location-detail");
+
+    await firstTab.focus();
+    await expect(firstTab).toHaveAttribute("aria-selected", "true");
+    await expect(panel.getByRole("heading", { name: "Spire Bushey Hospital" })).toBeVisible();
+
+    await page.keyboard.press("ArrowDown");
+    await expect(secondTab).toBeFocused();
+    await expect(secondTab).toHaveAttribute("aria-selected", "true");
+    await expect(firstTab).toHaveAttribute("aria-selected", "false");
+    await expect(panel.getByRole("heading", { name: "The Clementine Churchill Hospital & Clinics" })).toBeVisible();
+
+    await page.keyboard.press("ArrowUp");
+    await expect(firstTab).toBeFocused();
+    await expect(panel.getByRole("heading", { name: "Spire Bushey Hospital" })).toBeVisible();
+  });
+
+  test("treatments index rows are reachable and activatable by keyboard", async ({ page }) => {
+    await page.goto("/treatments");
+    const link = page.getByRole("region", { name: "Treatments" }).getByRole("link", { name: /Upper GI Endoscopy/ });
+    await link.focus();
+    await expect(link).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/treatments\/upper-gi-endoscopy$/);
   });
 });

@@ -39,8 +39,8 @@ export const appointmentRequestSchema = z.object({
 export type AppointmentRequestInput = z.infer<typeof appointmentRequestSchema>;
 
 export const locationLabels: Record<AppointmentRequestInput["preferredLocation"], string> = {
-  "spire-bushey": "Spire Bushey Hospital & Diagnostic Centre",
-  "clementine-churchill-harrow": "The Clementine Churchill Hospital, Harrow",
+  "spire-bushey": "Spire Bushey Hospital",
+  "clementine-churchill-harrow": "The Clementine Churchill Hospital & Clinics",
   "wellington-elstree": "The Wellington Hospital, Elstree Waterfront",
   "no-preference": "No preference / not sure",
 };

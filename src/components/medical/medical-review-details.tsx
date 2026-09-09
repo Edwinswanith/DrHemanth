@@ -9,7 +9,7 @@ import type { MedicalReviewMeta } from "@/types/medical";
  */
 export function MedicalReviewDetails({ reviewMeta }: { reviewMeta: MedicalReviewMeta }) {
   return (
-    <div className="rounded-(--radius-md) border border-stone-200 bg-stone-100 p-4 text-(length:--text-small) text-ink-700">
+    <div className="rounded-md border border-stone-200 bg-stone-100 p-4 text-small text-ink-700">
       <p className="mb-1 flex items-center gap-2 font-medium text-ink-900">
         {reviewMeta.status === "requires-clinical-review" ? "Content status: pending clinical review" : reviewMeta.status}
         {reviewMeta.status === "requires-clinical-review" && <PendingBadge />}

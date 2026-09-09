@@ -10,80 +10,126 @@
  */
 
 @theme {
-  /* --- Colour: deep ink/navy (authority) --- */
-  --color-ink-950: #0b1220;
-  --color-ink-900: #101a2e;
-  --color-ink-800: #182640;
-  --color-ink-700: #22314f;
-  --color-ink-600: #364766;
-  --color-ink-500: #576a8c;
+  /* --- Colour: "Oxford Navy and Porcelain" system (approved migration,
+     replacing the earlier "Porcelain Clinical Teal" pass) --- Scale steps
+     carry stable structural names (ink-*, stone-*, steel-*, bronze-*) so
+     component classes repaint automatically on a future retone; the
+     semantic aliases below (--color-page, --color-primary, etc.) are the
+     literal approved token names, for new/updated component work to use
+     directly. Do not hardcode any of these hex values inside components —
+     reference the Tailwind utility (bg-page, text-ink, border-border, …)
+     or the CSS custom property. The former "teal-*" scale name is
+     deliberately retired (not just retoned) — see docs/08-design-system.md
+     and TASKS.md for the migration record; every component that referenced
+     teal-* now references steel-* instead. */
 
-  /* --- Colour: warm ivory/stone (background) --- */
-  --color-stone-50: #faf8f4;
-  --color-stone-100: #f4f0e8;
-  --color-stone-200: #e9e2d4;
-  --color-stone-300: #d8cdb6;
+  /* --- Colour: Oxford navy (authority) --- */
+  --color-ink-950: #142b3a;
+  --color-ink-900: #1b3a4b;
+  --color-ink-800: #284c5e;
+  --color-ink-700: #405463;
+  --color-ink-600: #667680;
+  --color-ink-500: #869199;
 
-  /* --- Colour: muted surgical teal (supportive accent) --- */
-  --color-teal-700: #1f5f5b;
-  --color-teal-600: #2a7671;
-  --color-teal-500: #3a8f89;
-  --color-teal-100: #dcece9;
+  /* --- Colour: porcelain/sandstone (background) --- */
+  --color-ivory: #f8f9fb;
+  --color-stone-50: var(--color-ivory);
+  --color-stone-100: #f3efe9;
+  --color-stone-200: #d7e0e7;
+  --color-stone-300: #b8c6d0;
+  --color-white: #ffffff;
 
-  /* --- Colour: soft sage (calm informational areas) --- */
-  --color-sage-600: #6b8068;
-  --color-sage-100: #e6ebe2;
+  /* --- Colour: steel blue (primary action) --- */
+  --color-steel-800: #234a61;
+  --color-steel-700: #2f5f7a;
+  --color-steel-600: #3d6f89;
+  --color-steel-500: #587f92;
+  --color-steel-100: #dce7ef;
+  --color-steel-050: #eef2f6;
 
-  /* --- Colour: restrained bronze accent (CTA / premium emphasis) ---
-     bronze-700 (not -600) is the CTA background against white text: -600
-     measures 3.99:1 against --color-stone-50 (fails WCAG AA 4.5:1 for
-     normal text, caught by tests/accessibility/wcag.spec.ts). -600 is kept
-     for non-text uses (focus outlines, small accents) where the 3:1
-     UI-component threshold applies instead. */
-  --color-bronze-800: #6f4722;
-  --color-bronze-700: #8a5a2b;
-  --color-bronze-600: #a5702f;
-  --color-bronze-500: #bd8746;
-  --color-bronze-100: #f3e6d3;
+  /* --- Colour: restrained bronze accent (editorial detail only, max ~2%
+     of the rendered surface — never a primary action colour, never used
+     for small body text at the -500 step, see accent-text below) --- */
+  --color-bronze-800: #7a5a3b;
+  --color-bronze-700: #8c6c4c;
+  --color-bronze-600: #a17d5c;
+  --color-bronze-500: #b1845b;
+  --color-bronze-300: #c7a886;
+  --color-bronze-200: #dcc7a8;
+  --color-bronze-100: #efe2d0;
 
-  /* --- Status colours --- */
-  --color-success-600: #246640;
-  --color-success-100: #dff0e5;
-  --color-warning-700: #92620c;
-  --color-warning-100: #fbeecd;
-  --color-error-600: #af3131;
-  --color-error-100: #f8dede;
+  /* --- Status colours --- Neutral "success" is intentionally NOT a green
+     token: per the approved migration, success states reuse the primary
+     steel-blue system plus an explicit check icon and copy — never colour
+     alone. See AppointmentSuccess. */
+  --color-warning: #8a6427;
+  --color-warning-700: var(--color-warning);
+  /* Lighter than a typical -100 tint, deliberately: #8a6427 text needs this
+     much headroom to clear 4.5:1 against its own tint (PendingBadge etc.)
+     — verified via axe color-contrast, see docs/14-accessibility-checklist.md. */
+  --color-warning-100: #fbf3e3;
+  --color-error: #a44747;
+  --color-error-600: var(--color-error);
+  --color-error-100: #f4dddd;
+  --color-brand-youtube: #ff0000;
+  --color-brand-youtube-hover: #cc0000;
 
   /* --- Text on light background --- */
-  --color-text-primary: var(--color-ink-900);
-  --color-text-secondary: var(--color-ink-600);
+  --color-text: var(--color-ink-700);
+  --color-text-muted: var(--color-ink-600);
+  --color-text-primary: var(--color-text);
+  --color-text-secondary: var(--color-text-muted);
   --color-text-on-dark: var(--color-stone-50);
+
+  /* --- Approved semantic aliases (Oxford Navy and Porcelain token names) --- */
+  --color-page: var(--color-stone-50);
+  --color-surface: var(--color-white);
+  --color-surface-soft: var(--color-steel-050);
+  --color-surface-warm: var(--color-stone-100);
+  --color-ink: var(--color-ink-950);
+  --color-primary: var(--color-steel-700);
+  --color-primary-hover: var(--color-steel-800);
+  --color-primary-soft: var(--color-steel-100);
+  --color-border: var(--color-stone-200);
+  --color-border-strong: var(--color-stone-300);
+  --color-accent-decoration: var(--color-bronze-500);
+  --color-accent-text: var(--color-bronze-800);
 
   /* --- Type ---
      --font-display and --font-body are intentionally NOT declared here.
      They are supplied at runtime by next/font in src/app/layout.tsx
-     (self-hosted Fraunces/Inter, variable names chosen to match), so the
+     (self-hosted Source Serif 4/Manrope, variable names chosen to match), so the
      actual font files are optimised/self-hosted by Next.js rather than
      fetched from Google at request time. Declaring a second, conflicting
      value for the same custom property here would fight the cascade. */
 
-  --text-hero: clamp(2.25rem, 1.7rem + 2.2vw, 3.75rem);
-  --text-display: clamp(1.75rem, 1.4rem + 1.4vw, 2.75rem);
-  --text-heading: clamp(1.375rem, 1.2rem + 0.7vw, 1.875rem);
-  --text-body-lg: 1.125rem;
-  --text-body: 1rem;
+  --text-hero: clamp(3rem, 5vw, 4.75rem);
+  --text-page-h1: clamp(2.75rem, 4.5vw, 4.25rem);
+  --text-display: clamp(2.1rem, 3.6vw, 3.5rem);
+  --text-heading: clamp(1.35rem, 2vw, 1.75rem);
+  --text-body-lg: clamp(1.0625rem, 1.3vw, 1.25rem);
+  --text-body: 1.0625rem;
   --text-small: 0.875rem;
+  --text-label: 0.8125rem;
 
   /* --- Spacing scale --- */
-  --spacing-section-y: clamp(3.5rem, 3rem + 2vw, 6rem);
-  --spacing-content-max: 42rem; /* ~65ch measure for body copy */
+  --layout-max: 80rem;
+  --layout-readable: 68ch;
+  --layout-narrow: 47.5rem;
+  --layout-gutter: clamp(1.25rem, 5vw, 4.5rem);
+
+  --section-space-compact: clamp(2.5rem, 4vw, 3.5rem);
+  --section-space-standard: clamp(3rem, 5vw, 5rem);
+  --section-space-feature: clamp(3.5rem, 6vw, 6rem);
+  --spacing-section-y: var(--section-space-standard);
+  --spacing-content-max: var(--layout-readable);
 
   /* --- Radius / shadow (restrained, not "excessively rounded") --- */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --shadow-card: 0 1px 2px rgba(11, 18, 32, 0.06), 0 4px 12px rgba(11, 18, 32, 0.06);
-  --shadow-raised: 0 2px 4px rgba(11, 18, 32, 0.08), 0 12px 24px rgba(11, 18, 32, 0.1);
+  --radius-lg: 0.5rem;
+  --shadow-card: 0 1px 2px rgba(20, 43, 58, 0.06), 0 4px 12px rgba(20, 43, 58, 0.06);
+  --shadow-raised: 0 2px 4px rgba(20, 43, 58, 0.1), 0 14px 30px rgba(20, 43, 58, 0.16);
 
   /* --- Motion --- */
   --duration-fast: 150ms;

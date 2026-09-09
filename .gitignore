@@ -16,3 +16,12 @@ test-results/
 Thumbs.db
 docs/raw-crawl/*
 !docs/raw-crawl/.gitkeep
+
+# Local debug/dev-session artifacts (not project source)
+.dev-*.log
+.next-start*.log
+.playwright-mcp/
+artifacts/
+audit-artifacts/
+_unpublished-review/
+/*.png

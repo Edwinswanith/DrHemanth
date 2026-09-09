@@ -10,7 +10,24 @@ const BASE = (process.argv.includes("--base") ? process.argv[process.argv.indexO
 
 // Kept in sync with src/app/sitemap.ts — the only routes considered
 // production-ready in the current phase (see docs/02-information-architecture.md).
-const ROUTES = ["/", "/appointments", "/privacy", "/accessibility", "/medical-disclaimer", "/treatments/hernia-surgery", "/treatments/gallbladder-surgery", "/treatments/bile-duct-exploration"];
+const ROUTES = [
+  "/",
+  "/appointments",
+  "/privacy",
+  "/accessibility",
+  "/medical-disclaimer",
+  "/patient-feedback",
+  "/qualifications-and-memberships",
+  "/robotic-vs-laparoscopic",
+  "/treatments",
+  "/treatments/upper-gi-endoscopy",
+  "/treatments/anti-reflux-surgery",
+  "/treatments/hernia-surgery",
+  "/treatments/gallbladder-surgery",
+  "/treatments/bile-duct-exploration",
+  "/treatments/liver-and-spleen-surgery",
+  "/treatments/appendicectomy",
+];
 
 function extract(html) {
   const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.trim();

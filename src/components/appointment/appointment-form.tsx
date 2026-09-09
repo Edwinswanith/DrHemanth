@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { availabilityLabels, locationLabels } from "@/features/appointments/appointment.schema";
 import type { AppointmentRequestInput } from "@/features/appointments/appointment.schema";
 import { siteConfig } from "@/content/site";
+import { showNonPublicContent } from "@/lib/content/publication";
 import {
   trackAppointmentFormStarted,
   trackAppointmentSubmissionFailed,
@@ -19,9 +20,10 @@ type FieldState = Partial<Record<keyof AppointmentRequestInput, string>>;
 interface Props {
   source: "hero" | "full-page" | "mobile-drawer";
   compact?: boolean;
+  tone?: "light" | "dark";
 }
 
-export function AppointmentForm({ source, compact = false }: Props) {
+export function AppointmentForm({ source, compact = false, tone = "light" }: Props) {
   const formId = useId();
   const router = useRouter();
   const [submissionToken] = useState(() => crypto.randomUUID());
@@ -30,8 +32,21 @@ export function AppointmentForm({ source, compact = false }: Props) {
   const [fieldErrors, setFieldErrors] = useState<FieldState>({});
   const [hasStarted, setHasStarted] = useState(false);
 
-  const locationOptions = useMemo(() => Object.entries(locationLabels), []);
+  const locationOptions = useMemo(
+    () =>
+      Object.entries(locationLabels).filter(
+        ([value]) => showNonPublicContent || value === "no-preference"
+      ),
+    []
+  );
   const availabilityOptions = useMemo(() => Object.entries(availabilityLabels), []);
+  const noticeClassName = tone === "dark" ? "text-stone-200" : "text-ink-700";
+  const privacyClassName = tone === "dark" ? "text-stone-100" : "text-ink-800";
+  const privacyLinkClassName = tone === "dark" ? "underline hover:text-white" : "underline hover:text-ink-900";
+  const formClassName = compact
+    ? "appointment-form-compact grid grid-cols-1 gap-4"
+    : "grid grid-cols-1 gap-6";
+  const fullWidthFieldClassName = compact ? "col-span-full" : undefined;
 
   function onAnyFieldChange() {
     if (!hasStarted) {
@@ -99,19 +114,31 @@ export function AppointmentForm({ source, compact = false }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4" aria-describedby={`${formId}-notice`}>
-      <p id={`${formId}-notice`} className="text-(length:--text-small) text-ink-700">
+    <form onSubmit={handleSubmit} noValidate className={formClassName} aria-describedby={`${formId}-notice`}>
+      <p
+        id={`${formId}-notice`}
+        className={`text-small ${noticeClassName} ${compact ? "col-span-full leading-snug" : ""}`}
+      >
         {siteConfig.requestNotConfirmedNotice}
       </p>
 
       {(status === "error" || status === "rate-limited") && (
-        <AppointmentError
-          variant={status === "rate-limited" ? "rate-limited" : "generic"}
-          message={errorMessage}
-        />
+        <div className={compact ? "col-span-full" : undefined}>
+          <AppointmentError
+            variant={status === "rate-limited" ? "rate-limited" : "generic"}
+            message={errorMessage}
+          />
+        </div>
       )}
 
-      <FormField id={`${formId}-fullName`} label="Full name" required error={fieldErrors.fullName}>
+      <FormField
+        id={`${formId}-fullName`}
+        label="Full name"
+        required
+        error={fieldErrors.fullName}
+        tone={tone}
+        className={fullWidthFieldClassName}
+      >
         <input
           id={`${formId}-fullName`}
           name="fullName"
@@ -120,12 +147,13 @@ export function AppointmentForm({ source, compact = false }: Props) {
           required
           onChange={onAnyFieldChange}
           aria-invalid={Boolean(fieldErrors.fullName)}
+          aria-describedby={fieldErrors.fullName ? `${formId}-fullName-error` : undefined}
           className={textFieldClassName(Boolean(fieldErrors.fullName))}
         />
       </FormField>
 
-      <div className={compact ? "flex flex-col gap-4" : "grid grid-cols-1 gap-4 sm:grid-cols-2"}>
-        <FormField id={`${formId}-telephone`} label="Telephone" required error={fieldErrors.telephone}>
+      <div className={compact ? "contents" : "grid grid-cols-1 gap-6 sm:grid-cols-[repeat(2,minmax(0,1fr))]"}>
+        <FormField id={`${formId}-telephone`} label="Telephone" required error={fieldErrors.telephone} tone={tone}>
           <input
             id={`${formId}-telephone`}
             name="telephone"
@@ -134,11 +162,12 @@ export function AppointmentForm({ source, compact = false }: Props) {
             required
             onChange={onAnyFieldChange}
             aria-invalid={Boolean(fieldErrors.telephone)}
+            aria-describedby={fieldErrors.telephone ? `${formId}-telephone-error` : undefined}
             className={textFieldClassName(Boolean(fieldErrors.telephone))}
           />
         </FormField>
 
-        <FormField id={`${formId}-email`} label="Email address" required error={fieldErrors.email}>
+        <FormField id={`${formId}-email`} label="Email address" required error={fieldErrors.email} tone={tone}>
           <input
             id={`${formId}-email`}
             name="email"
@@ -147,12 +176,20 @@ export function AppointmentForm({ source, compact = false }: Props) {
             required
             onChange={onAnyFieldChange}
             aria-invalid={Boolean(fieldErrors.email)}
+            aria-describedby={fieldErrors.email ? `${formId}-email-error` : undefined}
             className={textFieldClassName(Boolean(fieldErrors.email))}
           />
         </FormField>
       </div>
 
-      <FormField id={`${formId}-preferredLocation`} label="Preferred location" required error={fieldErrors.preferredLocation}>
+      <FormField
+        id={`${formId}-preferredLocation`}
+        label="Preferred location"
+        required
+        error={fieldErrors.preferredLocation}
+        tone={tone}
+        className={fullWidthFieldClassName}
+      >
         <select
           id={`${formId}-preferredLocation`}
           name="preferredLocation"
@@ -160,6 +197,7 @@ export function AppointmentForm({ source, compact = false }: Props) {
           defaultValue=""
           onChange={onAnyFieldChange}
           aria-invalid={Boolean(fieldErrors.preferredLocation)}
+          aria-describedby={fieldErrors.preferredLocation ? `${formId}-preferredLocation-error` : undefined}
           className={inputBase}
         >
           <option value="" disabled>
@@ -173,12 +211,13 @@ export function AppointmentForm({ source, compact = false }: Props) {
         </select>
       </FormField>
 
-      <div className={compact ? "flex flex-col gap-4" : "grid grid-cols-1 gap-4 sm:grid-cols-2"}>
+      <div className={compact ? "contents" : "grid grid-cols-1 gap-6 sm:grid-cols-[repeat(2,minmax(0,1fr))]"}>
         <FormField
           id={`${formId}-preferredContactMethod`}
           label="Preferred contact method"
           required
           error={fieldErrors.preferredContactMethod}
+          tone={tone}
         >
           <select
             id={`${formId}-preferredContactMethod`}
@@ -187,6 +226,9 @@ export function AppointmentForm({ source, compact = false }: Props) {
             defaultValue=""
             onChange={onAnyFieldChange}
             aria-invalid={Boolean(fieldErrors.preferredContactMethod)}
+            aria-describedby={
+              fieldErrors.preferredContactMethod ? `${formId}-preferredContactMethod-error` : undefined
+            }
             className={inputBase}
           >
             <option value="" disabled>
@@ -197,7 +239,13 @@ export function AppointmentForm({ source, compact = false }: Props) {
           </select>
         </FormField>
 
-        <FormField id={`${formId}-broadAvailability`} label="Broad availability" required error={fieldErrors.broadAvailability}>
+        <FormField
+          id={`${formId}-broadAvailability`}
+          label="Broad availability"
+          required
+          error={fieldErrors.broadAvailability}
+          tone={tone}
+        >
           <select
             id={`${formId}-broadAvailability`}
             name="broadAvailability"
@@ -205,6 +253,7 @@ export function AppointmentForm({ source, compact = false }: Props) {
             defaultValue=""
             onChange={onAnyFieldChange}
             aria-invalid={Boolean(fieldErrors.broadAvailability)}
+            aria-describedby={fieldErrors.broadAvailability ? `${formId}-broadAvailability-error` : undefined}
             className={inputBase}
           >
             <option value="" disabled>
@@ -225,30 +274,42 @@ export function AppointmentForm({ source, compact = false }: Props) {
         <input id={`${formId}-companyWebsite`} name="companyWebsite" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <label className="flex items-start gap-2 text-(length:--text-small) text-ink-800">
+      <label className={`flex items-start gap-2 text-small ${privacyClassName} ${compact ? "col-span-full" : ""}`}>
         <input
           type="checkbox"
           name="privacyAcknowledged"
           required
-          className="mt-1 h-4 w-4 shrink-0 accent-bronze-600"
+          className="mt-1 h-5 w-5 shrink-0 accent-steel-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel-700"
           aria-invalid={Boolean(fieldErrors.privacyAcknowledged)}
+          aria-describedby={
+            fieldErrors.privacyAcknowledged ? `${formId}-privacyAcknowledged-error` : undefined
+          }
         />
         <span>
           I have read and understood the{" "}
-          <a href="/privacy" className="underline hover:text-ink-900">
+          <a href="/privacy" className={privacyLinkClassName}>
             privacy notice
           </a>
           . <span aria-hidden="true">*</span>
         </span>
       </label>
       {fieldErrors.privacyAcknowledged && (
-        <p role="alert" className="text-xs font-medium text-error-600">
+        <p
+          id={`${formId}-privacyAcknowledged-error`}
+          role="alert"
+          className={`text-small font-medium leading-snug text-error-600 ${compact ? "col-span-full" : ""}`}
+        >
           {fieldErrors.privacyAcknowledged}
         </p>
       )}
 
-      <Button type="submit" size="lg" disabled={status === "submitting"} className="mt-2">
-        {status === "submitting" ? "Sending request…" : "Request an Appointment"}
+      <Button
+        type="submit"
+        size={compact ? "md" : "lg"}
+        disabled={status === "submitting"}
+        className={compact ? "col-span-full mt-1" : "mt-2"}
+      >
+        {status === "submitting" ? "Sending request..." : "Request an Appointment"}
       </Button>
     </form>
   );

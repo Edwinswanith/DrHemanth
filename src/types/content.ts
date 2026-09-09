@@ -4,7 +4,7 @@
  * string — see docs/04-content-verification.md, which this type mirrors.
  */
 
-export type VerificationStatus = "verified" | "pending-verification" | "do-not-publish";
+export type VerificationStatus = "verified" | "pending" | "blocked" | "retired";
 
 /** Evidence hierarchy tiers — docs/04-content-verification.md */
 export type EvidenceTier =
@@ -32,5 +32,13 @@ export function verified<T>(value: T, tier: EvidenceTier, note?: string): Verifi
 }
 
 export function pending<T>(value: T, note: string, tier: EvidenceTier = "unverified"): VerifiedFact<T> {
-  return { value, status: "pending-verification", tier, note };
+  return { value, status: "pending", tier, note };
+}
+
+export function blocked<T>(value: T, note: string, tier: EvidenceTier = "unverified"): VerifiedFact<T> {
+  return { value, status: "blocked", tier, note };
+}
+
+export function retired<T>(value: T, note: string, tier: EvidenceTier = "unverified"): VerifiedFact<T> {
+  return { value, status: "retired", tier, note };
 }

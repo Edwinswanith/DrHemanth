@@ -13,7 +13,7 @@ export default function PrivacyPage() {
     <Section ariaLabel="Privacy notice">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Privacy Notice", href: "/privacy" }]} />
       <h1 className="mt-4 mb-2">Privacy notice</h1>
-      <p className="mb-8 max-w-2xl rounded-(--radius-md) border border-warning-700/30 bg-warning-100 p-4 text-(length:--text-small) text-ink-800">
+      <p className="mb-8 max-w-2xl rounded-md border border-warning-700/30 bg-warning-100 p-4 text-small text-ink-800">
         This notice describes how the appointment request form on this
         website is designed to handle your information. The specific legal
         basis for processing, full retention schedule, and data controller
@@ -26,7 +26,7 @@ export default function PrivacyPage() {
 
       <div className="flex max-w-2xl flex-col gap-6 text-ink-800">
         <div>
-          <h2 className="mb-2 text-(length:--text-heading)">What we collect</h2>
+          <h2 className="mb-2 text-heading">What we collect</h2>
           <p>
             When you submit an appointment request, we collect only: your
             full name, telephone number, email address, preferred practice
@@ -37,7 +37,7 @@ export default function PrivacyPage() {
           </p>
         </div>
         <div>
-          <h2 className="mb-2 text-(length:--text-heading)">How we use it</h2>
+          <h2 className="mb-2 text-heading">How we use it</h2>
           <p>
             We use this information solely to contact you and arrange your
             requested appointment. We do not use it for marketing, and we do
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
           </p>
         </div>
         <div>
-          <h2 className="mb-2 text-(length:--text-heading)">Where it is stored</h2>
+          <h2 className="mb-2 text-heading">Where it is stored</h2>
           <p>
             Primary application compute and appointment storage are
             configured in the UK (London). Every processor, log, backup, and
@@ -58,7 +58,7 @@ export default function PrivacyPage() {
           </p>
         </div>
         <div>
-          <h2 className="mb-2 text-(length:--text-heading)">Your rights</h2>
+          <h2 className="mb-2 text-heading">Your rights</h2>
           <p>
             Under UK data protection law you have rights including access to,
             correction of, and deletion of your personal data. The process
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
           </p>
         </div>
         <div>
-          <h2 className="mb-2 text-(length:--text-heading)">Contact</h2>
+          <h2 className="mb-2 text-heading">Contact</h2>
           <p>
             Questions about this notice, or about your data, can be directed
             to the practice using the details on the{" "}

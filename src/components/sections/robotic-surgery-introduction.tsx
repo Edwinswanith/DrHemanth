@@ -1,52 +1,84 @@
+import { LinkButton } from "@/components/ui/button";
 import { Section } from "@/components/ui/section";
+import { HeroVideo } from "@/components/sections/hero-video";
+
+const decisionPoints = [
+  {
+    label: "Benefit",
+    value: "3D vision and wristed instruments may help selected operations.",
+  },
+  {
+    label: "Limits",
+    value: "It is not autonomous or automatically superior.",
+  },
+  {
+    label: "Suitability",
+    value: "Diagnosis, anatomy and hospital pathway guide the choice.",
+  },
+];
+
+const controlSequence = [
+  "The surgeon sits at the console",
+  "Hand movements are translated by the system",
+  "Instruments move only under surgeon control",
+];
 
 export function RoboticSurgeryIntroduction() {
   return (
-    <Section id="robotic-surgery" tone="accent" ariaLabel="Introduction to robotic surgery">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <h2 className="mb-4">Robotic surgery</h2>
-          <p className="text-ink-800">
-            Robotic-assisted surgery is a form of minimally invasive surgery
-            in which the surgeon operates from a console, controlling
-            specialised instruments and a magnified 3D camera through small
-            incisions. <strong>The surgeon controls every movement throughout
-            the procedure</strong> — the system has no autonomous function and
-            cannot act on its own.
-          </p>
-          <p className="mt-4 text-ink-800">
-            Robotic-assisted programmes are increasingly available across NHS
-            and private hospitals in the UK, including a da Vinci
-            robotic-surgery programme at London North West University
-            Healthcare NHS Trust (Ealing Hospital and Northwick Park
-            Hospital), which has focused on procedures including hernia
-            repair and gallbladder surgery.{" "}
-            <a
-              href="https://www.lnwh.nhs.uk/"
-              className="underline hover:text-ink-900"
-              rel="noreferrer"
-              target="_blank"
-            >
-              Source: London North West University Healthcare NHS Trust
-            </a>
-            .
-          </p>
-          <p className="mt-4 text-(length:--text-small) text-ink-600">
-            Details of which procedures {"Prof. Hemant Sheth"} personally
-            performs robotically, and in which setting, are being confirmed
-            directly with him before publication — see this site&rsquo;s
-            content-verification tracker. Robotic surgery is not automatically
-            better than laparoscopic or open surgery: the right approach
-            depends on the patient, the condition, and clinical judgement.
-          </p>
-        </div>
+    <Section id="robotic-surgery" tone="dark" spacing="compact" ariaLabel="Introduction to robotic surgery">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
         <div className="lg:col-span-5">
-          <h3 className="mb-2 text-(length:--text-body-lg)">Robotic vs laparoscopic</h3>
-          <p className="text-ink-700">
-            Both are minimally invasive approaches using small incisions.
-            The difference is how the surgeon controls the instruments and
-            camera. See the full comparison below.
+          <p className="mb-3 text-label font-semibold uppercase tracking-wide text-steel-100">
+            Minimally invasive surgery
           </p>
+          <h2 className="text-balance text-stone-50">Robotic surgery, clearly explained.</h2>
+          <p className="mt-5 text-body-lg text-stone-200">
+            Robotic-assisted surgery uses small incisions, a console, specialist instruments and a magnified 3D view.
+          </p>
+          <p className="mt-5 border-l border-steel-100/50 pl-5 font-semibold text-stone-50">
+            The surgeon controls every movement. The system cannot act on its own.
+          </p>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+            <LinkButton href="/robotic-vs-laparoscopic" variant="inverse">
+              Compare approaches
+            </LinkButton>
+          </div>
+        </div>
+
+        <div className="lg:col-span-7">
+          <div className="border border-stone-50/20 bg-ink-950/35 p-2">
+            <div className="aspect-video overflow-hidden bg-ink-950" data-testid="hero-video-frame">
+              <HeroVideo />
+            </div>
+          </div>
+          <p className="mt-3 text-small leading-relaxed text-stone-300">Video loads only after activation.</p>
+
+          <ol
+            className="mt-6 grid grid-cols-1 gap-4 border-y border-stone-50/20 py-5 sm:grid-cols-3"
+            aria-label="How surgeon-controlled robotic surgery works"
+          >
+            {controlSequence.map((item, index) => (
+              <li key={item} className="border-l border-stone-50/15 pl-4 first:border-l-0">
+                <span className="font-display text-heading leading-none text-steel-100">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <span className="mt-1.5 block text-small leading-relaxed text-stone-100">{item}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+
+        <div className="lg:col-span-12">
+          <dl className="grid gap-4 border-y border-stone-50/20 py-5 sm:grid-cols-3">
+            {decisionPoints.map((point) => (
+              <div key={point.label} className="border-l border-bronze-300/60 pl-4">
+                <dt className="text-label font-semibold uppercase tracking-wide text-steel-100">
+                  {point.label}
+                </dt>
+                <dd className="mt-1 text-small leading-relaxed text-stone-200">{point.value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
       </div>
     </Section>

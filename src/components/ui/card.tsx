@@ -13,8 +13,8 @@ export function Card({
   return (
     <div
       className={cn(
-        "rounded-(--radius-lg) border border-stone-200 bg-white p-6",
-        tone === "raised" ? "shadow-(--shadow-raised)" : "shadow-(--shadow-card)",
+        "rounded-lg border border-stone-200 bg-white p-6",
+        tone === "raised" ? "shadow-raised" : "shadow-card",
         className
       )}
     >

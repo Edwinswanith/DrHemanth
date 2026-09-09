@@ -18,8 +18,8 @@ export interface AccordionItemData {
  * than an instant `hidden` toggle — a `prefers-reduced-motion` respecting,
  * opacity/size-only transition per .claude/rules/design-system.md.
  */
-export function Accordion({ items }: { items: AccordionItemData[] }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+export function Accordion({ items, defaultOpenIndex = null }: { items: AccordionItemData[]; defaultOpenIndex?: number | null }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(defaultOpenIndex);
   const baseId = useId();
 
   return (
@@ -38,16 +38,16 @@ export function Accordion({ items }: { items: AccordionItemData[] }) {
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : index)}
-                className="flex w-full items-center justify-between gap-4 py-4 text-left font-medium text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bronze-600"
+                className="flex w-full min-w-0 items-center justify-between gap-4 py-4 text-left text-body-lg font-semibold leading-snug text-ink-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel-700"
               >
-                <span>{item.question}</span>
-                <span aria-hidden="true" className={cn("shrink-0 transition-transform duration-(--duration-base)", isOpen && "rotate-45")}>
+                <span className="min-w-0 break-words">{item.question}</span>
+                <span aria-hidden="true" className={cn("shrink-0 transition-transform duration-base", isOpen && "rotate-45")}>
                   +
                 </span>
               </button>
             </h3>
             <div
-              className="grid transition-[grid-template-rows] duration-(--duration-base) ease-(--ease-standard)"
+              className="grid transition-[grid-template-rows] duration-base ease-standard"
               style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
             >
               <div
@@ -63,9 +63,9 @@ export function Accordion({ items }: { items: AccordionItemData[] }) {
                 // the whole collapsed panel from both focus and the
                 // accessibility tree.
                 inert={!isOpen}
-                className="overflow-hidden"
+                className="overflow-hidden bg-surface"
               >
-                <div className="pb-4 text-ink-700">{item.answer}</div>
+                <div className="px-1 pb-4 text-ink-700">{item.answer}</div>
               </div>
             </div>
           </div>

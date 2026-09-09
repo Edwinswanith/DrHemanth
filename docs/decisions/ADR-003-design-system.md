@@ -13,7 +13,7 @@ that the old site is not the visual reference.
 ## Decision
 
 A custom, editorial, premium-clinical design system built on tokens (see
-`08-design-system.md`): deep ink/navy + warm ivory/stone + muted teal/sage
+`08-design-system.md`): deep ink/navy + warm ivory/stone + muted teal
 + one restrained accent; editorial serif display type + legible sans body;
 disciplined asymmetric grid; homepage's 15 content modules may compose into
 fewer visual sections where that improves communication, but each retains a

@@ -16,8 +16,8 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
   };
 
   return (
-    <nav aria-label="Breadcrumb" className="text-(length:--text-small) text-ink-600">
-      <ol className="flex flex-wrap items-center gap-1">
+    <nav aria-label="Breadcrumb" className="text-small text-ink-700">
+      <ol className="flex flex-wrap items-center gap-x-1 gap-y-2">
         {items.map((item, index) => (
           <li key={item.href} className="flex items-center gap-1">
             {index > 0 && (
@@ -26,11 +26,14 @@ export function Breadcrumbs({ items }: { items: BreadcrumbItem[] }) {
               </span>
             )}
             {index === items.length - 1 ? (
-              <span aria-current="page" className="text-ink-800">
+              <span aria-current="page" className="inline-flex min-h-11 items-center rounded-sm px-1 text-ink-800">
                 {item.label}
               </span>
             ) : (
-              <Link href={item.href} className="hover:text-ink-900 hover:underline">
+              <Link
+                href={item.href}
+                className="inline-flex min-h-11 items-center rounded-sm px-1 hover:text-ink-900 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-steel-700"
+              >
                 {item.label}
               </Link>
             )}

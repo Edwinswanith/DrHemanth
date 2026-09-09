@@ -18,6 +18,71 @@ laparoscopic surgery; patients ready to request a consultation; family
 members researching on someone else's behalf; GPs/referrers; local patients
 in Hertfordshire/Harrow/Elstree/NW London (locations pending verification).
 
+## Commands
+
+```bash
+npm install
+npm run dev                  # local dev server
+npm run build                # production build
+npm run start                # serve the production build
+
+npm run typecheck            # tsc --noEmit
+npm run lint                 # eslint .
+
+npm run test                 # Vitest unit/integration, single run
+npm run test:watch           # Vitest watch mode
+npx vitest run path/to/file.test.ts        # single unit/integration file
+npx vitest run -t "test name substring"    # single test by name
+
+npm run test:e2e             # Playwright — builds+starts the prod server itself, then runs
+npx playwright test tests/e2e/treatment-page.spec.ts      # single e2e spec
+npx playwright test --project=desktop-1440                # single viewport project only
+                              # projects: mobile-390, tablet-768, desktop-1440, desktop-1920
+                              # (full required set per .claude/rules/testing.md also includes 430x932 and 1024x768)
+
+npm run check:links          # scripts/check-links.mjs
+npm run check:redirects      # scripts/check-redirects.mjs — every docs/06-seo-migration-map.csv row resolves, no chains/loops
+npm run check:metadata       # scripts/check-metadata.mjs — canonical/title/meta-description uniqueness
+npm run check:structured-data # scripts/check-structured-data.mjs — JSON-LD matches visible page facts
+
+npm run audit:crawl          # scripts/audit-crawl.mjs — re-crawl the OLD site for migration audit (not this repo's routes)
+npm run audit:content        # scripts/extract-source-content.mjs
+npm run audit:map            # scripts/build-migration-map.mjs — regenerates docs/06-seo-migration-map.csv
+npm run audit:scroll-density # scripts/measure-scroll-density.mjs
+
+node scripts/check-repository.mjs        # repo hygiene checks (not wired to an npm script)
+node scripts/generate-content-report.mjs # content-verification status report (not wired to an npm script)
+```
+
+A single `npm test`/`npm run test:e2e` invocation is not enough to call a
+feature done — see Testing requirements below and `.claude/rules/testing.md`.
+
+## Architecture
+
+- **Content** is typed data, not a CMS: files under `src/content/` (surgeon
+  profile, nav, treatments, site config, patient feedback) are imported
+  through the barrel `src/lib/content/index.ts`, which Zod-validates every
+  export at import time against schemas in `src/lib/content/schema.ts` — a
+  missing/invalid required field fails the build rather than rendering wrong
+  data. Add new content by adding a typed file + schema, not by hardcoding
+  strings in a component. See `docs/decisions/ADR-002-content-architecture.md`.
+- **Appointments** are a self-contained feature module in
+  `src/features/appointments/` (`appointment.schema.ts` for Zod validation,
+  `appointment.service.ts` for orchestration, `appointment.repository.ts` as
+  the repository interface with `in-memory-appointment-repository.ts` /
+  `postgres-appointment-repository.ts` implementations, plus
+  `appointment-rate-limit.ts` and `appointment.analytics.ts`). The single
+  route handler `src/app/api/appointment-request/route.ts` calls into this
+  module — it holds no business logic itself. Notification sending is an
+  adapter interface (`src/lib/email/notification-provider.ts`); the dev/
+  logging adapter is the default until a real provider clears the Phase B
+  data-processing review (`docs/decisions/ADR-004-appointment-workflow.md`).
+- **Routes exist only where content has cleared verification** — `src/app/`
+  intentionally does not mirror the full information architecture in
+  `docs/02-information-architecture.md`. Check `TASKS.md` and
+  `docs/04-content-verification.md` before assuming a route should exist.
+- Full directory map and rationale: `PROJECT_STRUCTURE.md`.
+
 ## Trust and medical content — non-negotiable
 
 - Never invent qualifications, GMC details, hospital affiliations, statistics,
@@ -88,7 +153,10 @@ with design tokens (never hardcoded colours in components), Zod for all
 server-side input validation, Vitest for unit/integration, Playwright for
 e2e/accessibility/visual. Reuse existing components/utilities before adding
 new ones. No placeholder interactions, dead buttons, `#` links, or fake
-loading/success states in anything presented as finished.
+loading/success states in anything presented as finished. Import via the
+`@/*` alias (maps to `src/*`), never relative `../../..` chains. Component
+files are kebab-case (`appointment-form.tsx`); exported React components are
+PascalCase.
 
 ## Source of truth
 

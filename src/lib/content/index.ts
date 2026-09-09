@@ -7,3 +7,4 @@
 export { siteConfig } from "@/content/site";
 export { surgeonProfile } from "@/content/surgeon";
 export { primaryNav, mobilePersistentActions } from "@/content/navigation";
+export { allTreatmentContent } from "@/content/treatments";

@@ -9,7 +9,7 @@ export function Badge({ className, children }: { className?: string; children: R
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-(--radius-sm) border border-teal-600/30 bg-teal-100 px-3 py-1 text-(length:--text-small) font-medium text-teal-700",
+        "inline-flex items-center rounded-sm border border-steel-600/30 bg-steel-100 px-3 py-1 text-small font-medium text-steel-700",
         className
       )}
     >
@@ -22,7 +22,7 @@ export function PendingBadge({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-(--radius-sm) border border-warning-700/30 bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700",
+        "inline-flex items-center rounded-sm border border-warning-700/30 bg-warning-100 px-2 py-0.5 text-xs font-medium text-warning-700",
         className
       )}
     >

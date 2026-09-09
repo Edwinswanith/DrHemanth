@@ -10,7 +10,24 @@
  * Usage: node scripts/check-structured-data.mjs [--base http://localhost:3000]
  */
 const BASE = (process.argv.includes("--base") ? process.argv[process.argv.indexOf("--base") + 1] : null) ?? "http://localhost:3000";
-const ROUTES = ["/", "/appointments", "/privacy", "/accessibility", "/medical-disclaimer", "/treatments/hernia-surgery", "/treatments/gallbladder-surgery", "/treatments/bile-duct-exploration"];
+const ROUTES = [
+  "/",
+  "/appointments",
+  "/privacy",
+  "/accessibility",
+  "/medical-disclaimer",
+  "/patient-feedback",
+  "/qualifications-and-memberships",
+  "/robotic-vs-laparoscopic",
+  "/treatments",
+  "/treatments/upper-gi-endoscopy",
+  "/treatments/anti-reflux-surgery",
+  "/treatments/hernia-surgery",
+  "/treatments/gallbladder-surgery",
+  "/treatments/bile-duct-exploration",
+  "/treatments/liver-and-spleen-surgery",
+  "/treatments/appendicectomy",
+];
 
 async function main() {
   let totalBlocks = 0;

@@ -1,7 +1,24 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
-const routes = ["/", "/appointments", "/privacy", "/accessibility", "/medical-disclaimer", "/treatments/hernia-surgery", "/treatments/gallbladder-surgery", "/treatments/bile-duct-exploration"];
+const routes = [
+  "/",
+  "/appointments",
+  "/privacy",
+  "/accessibility",
+  "/medical-disclaimer",
+  "/patient-feedback",
+  "/qualifications-and-memberships",
+  "/robotic-vs-laparoscopic",
+  "/treatments",
+  "/treatments/upper-gi-endoscopy",
+  "/treatments/anti-reflux-surgery",
+  "/treatments/hernia-surgery",
+  "/treatments/gallbladder-surgery",
+  "/treatments/bile-duct-exploration",
+  "/treatments/liver-and-spleen-surgery",
+  "/treatments/appendicectomy",
+];
 
 /**
  * Homepage sections (and any Section-shelled page) fade/translate in once
@@ -42,7 +59,7 @@ test.describe("Accessibility (WCAG 2.2 AA)", () => {
   }
 
   test("the appointment drawer dialog is announced and labelled correctly", async ({ page }, testInfo) => {
-    test.skip(testInfo.project.name !== "mobile-390", "Drawer only renders below the lg breakpoint");
+    test.skip(testInfo.project.name !== "mobile-390", "Drawer only renders at phone width");
     await page.goto("/");
     await page.getByRole("button", { name: "Request an Appointment" }).first().click();
     const dialog = page.getByRole("dialog", { name: "Request an Appointment" });

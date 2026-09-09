@@ -1,58 +1,80 @@
+import { Badge } from "@/components/ui/badge";
 import { Section } from "@/components/ui/section";
-import { Badge, PendingBadge } from "@/components/ui/badge";
 import { surgeonProfile } from "@/content/surgeon";
+import { canRenderFact } from "@/lib/content/publication";
 
-/**
- * Evidence, not decoration: only what's on record is shown, and anything
- * still pending verification is visibly marked as such rather than
- * presented with false confidence. No counters, no invented statistics —
- * see .claude/rules/design-system.md and .claude/rules/medical-content.md.
- */
+const verifiedRows = [
+  canRenderFact(surgeonProfile.displayTitle)
+    ? {
+        label: "Professional title",
+        value: surgeonProfile.displayTitle.value,
+      }
+    : null,
+  canRenderFact(surgeonProfile.gmcNumber)
+    ? {
+        label: "GMC information",
+        value: surgeonProfile.gmcNumber.value ?? "",
+      }
+    : null,
+  canRenderFact(surgeonProfile.currentNhsRole)
+    ? {
+        label: "NHS relationship",
+        value: surgeonProfile.currentNhsRole.value,
+      }
+    : null,
+].filter(Boolean) as { label: string; value: string }[];
+
 export function TrustEvidenceStrip() {
+  const rows = verifiedRows;
+  const publicQualifications = canRenderFact(surgeonProfile.qualifications)
+    ? surgeonProfile.qualifications.value
+    : [];
+
+  if (rows.length === 0 && publicQualifications.length === 0) {
+    return null;
+  }
+
   return (
-    <Section tone="sunken" ariaLabel="Qualifications and professional standing">
-      <h2 className="mb-1">Qualifications & professional standing</h2>
-      <p className="mb-6 max-w-2xl text-ink-700">
-        Every item below is shown with its verification status. Items marked
-        &ldquo;pending verification&rdquo; are sourced from the practice&rsquo;s previous
-        website and are being independently confirmed before they are stated
-        as fact.
-      </p>
-
-      <div className="flex flex-wrap items-center gap-2">
-        {surgeonProfile.qualifications.value.map((q) => (
-          <Badge key={q}>{q}</Badge>
-        ))}
-        {surgeonProfile.qualifications.status !== "verified" && <PendingBadge />}
-      </div>
-
-      <dl className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <dt className="text-(length:--text-small) font-semibold text-ink-600">Current NHS role</dt>
-          <dd className="mt-1 flex items-start gap-2 text-ink-900">
-            {surgeonProfile.currentNhsRole.value}
-            {surgeonProfile.currentNhsRole.status !== "verified" && <PendingBadge />}
-          </dd>
+    <Section
+      tone="default"
+      spacing="compact"
+      dataSection="trust-evidence"
+      ariaLabel="Qualifications and professional standing"
+      className="!bg-surface-soft border-b border-stone-200"
+    >
+      <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
+        <div className="lg:col-span-3">
+          <p className="text-label font-semibold uppercase tracking-wide text-steel-700">
+            Professional standing
+          </p>
+          <h2 className="mt-2 text-heading">Trust signals</h2>
         </div>
-        <div>
-          <dt className="text-(length:--text-small) font-semibold text-ink-600">Languages spoken</dt>
-          <dd className="mt-1 flex flex-wrap items-start gap-2 text-ink-900">
-            {surgeonProfile.languagesSpoken.value.join(", ")}
-            {surgeonProfile.languagesSpoken.status !== "verified" && <PendingBadge />}
-          </dd>
-        </div>
-      </dl>
 
-      <div className="mt-8">
-        <p className="mb-2 flex items-center gap-2 text-(length:--text-small) font-semibold text-ink-600">
-          Professional memberships
-          {surgeonProfile.professionalMemberships.status !== "verified" && <PendingBadge />}
-        </p>
-        <ul className="grid grid-cols-1 gap-x-6 gap-y-1 text-ink-800 sm:grid-cols-2">
-          {surgeonProfile.professionalMemberships.value.map((m) => (
-            <li key={m}>{m}</li>
+        <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:col-span-9">
+          {rows.map((row) => (
+            <div key={row.label} className="border-l border-border-strong pl-4">
+              <dt className="text-label font-semibold uppercase tracking-wide text-ink-700">
+                {row.label}
+              </dt>
+              <dd className="mt-1 text-small leading-relaxed text-ink-900">{row.value}</dd>
+            </div>
           ))}
-        </ul>
+        </dl>
+
+        {publicQualifications.length > 0 ? (
+          <>
+            <div className="lg:col-span-3">
+              <p className="text-label font-semibold uppercase tracking-wide text-ink-700">
+                Qualifications
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-2 lg:col-span-9">
+              {publicQualifications.map((qualification) => (
+                <Badge key={qualification}>{qualification}</Badge>
+              ))}
+            </div>
+          </>
+        ) : null}
       </div>
     </Section>
   );

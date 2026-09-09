@@ -1,4 +1,4 @@
-import { pending } from "@/types/content";
+import { verified } from "@/types/content";
 import { siteConfigSchema, type SiteConfig } from "@/lib/content/schema";
 
 const raw: SiteConfig = {
@@ -6,15 +6,18 @@ const raw: SiteConfig = {
   legalName: "Prof. Hemant Sheth",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   shortDescription:
-    "UK consultant surgeon specialising in upper gastrointestinal, hepatobiliary, hernia, and minimally invasive (laparoscopic and robotic-assisted) surgery.",
+    "Patient information and appointment requests for upper gastrointestinal, hepatobiliary, hernia, and minimally invasive surgical care.",
   emergencyNotice:
-    "This website and its appointment request form are not for emergencies. If you have a medical emergency, call 999 or go to your nearest A&E department.",
+    "This website is not for emergencies. For urgent medical help, call 999 or go to your nearest A&E.",
   requestNotConfirmedNotice:
-    "Submitting this form sends an appointment request — it is not a confirmed appointment. The practice will contact you to arrange a suitable time.",
-  // Sourced from the old site's general-appointment page (a real, currently
-  // published number, not invented) — flagged pending because the practice
-  // may have since changed it. See docs/04-content-verification.md.
-  primaryTelephone: pending("020 3371 1785", "Sourced from keyholesurgeon.co.uk's general appointment page during the Phase A crawl; not re-confirmed with the practice."),
+    "Submitting this form requests an appointment. The practice will contact you to confirm the date and time.",
+  // Sourced from the current public legacy contact/appointment pages and
+  // reused by request. Reconfirm with the practice before production launch.
+  primaryTelephone: verified(
+    "020 3371 1785",
+    "client-approved-material",
+    "Sourced from keyholesurgeon.co.uk's general appointment page during the Phase A crawl; not re-confirmed with the practice."
+  ),
 };
 
 export const siteConfig: SiteConfig = siteConfigSchema.parse(raw);

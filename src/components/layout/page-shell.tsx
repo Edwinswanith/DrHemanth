@@ -6,13 +6,13 @@ import { MobilePersistentActions } from "@/components/layout/mobile-navigation";
 export function PageShell({ children }: { children: ReactNode }) {
   return (
     <>
-      <a href="#main-content" className="skip-link">
-        Skip to main content
-      </a>
+      <nav aria-label="Skip links">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
+      </nav>
       <SiteHeader />
-      {/* Bottom padding on mobile reserves space for the persistent action
-          bar so it never overlaps footer content. */}
-      <main id="main-content" className="pb-20 lg:pb-0">
+      <main id="main-content">
         {children}
       </main>
       <SiteFooter />

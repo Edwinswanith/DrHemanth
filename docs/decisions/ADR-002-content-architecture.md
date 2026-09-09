@@ -14,8 +14,8 @@ file-based in-repo rather than a hosted headless CMS.
 
 Content lives as typed JSON/MDX under `src/content/`, validated by Zod
 schemas in `src/lib/content/`, edited via normal code review. Every content
-record carries `verificationStatus` (`verified` / `pending-verification` /
-`do-not-publish`), `reviewedBy`, `publishedDate`, `lastReviewed`.
+record carries `verificationStatus` (`verified` / `pending` / `blocked` /
+`retired`), `reviewedBy`, `publishedDate`, `lastReviewed`.
 
 ## Alternatives considered
 
