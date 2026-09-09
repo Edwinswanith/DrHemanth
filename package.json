@@ -22,7 +22,7 @@
     "check:structured-data": "node scripts/check-structured-data.mjs"
   },
   "dependencies": {
-    "next": "16.3.4",
+    "next": "15.5.25",
     "pg": "8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -39,7 +39,7 @@
     "@types/react-dom": "19.2.5",
     "@vitejs/plugin-react": "6.1.1",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.3.4",
+    "eslint-config-next": "15.5.25",
     "jsdom": "29.1.1",
     "tailwindcss": "4.3.3",
     "typescript": "5.9.3",
