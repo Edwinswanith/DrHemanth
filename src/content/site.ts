@@ -4,7 +4,7 @@ import { siteConfigSchema, type SiteConfig } from "@/lib/content/schema";
 const raw: SiteConfig = {
   name: "Prof. Hemant Sheth",
   legalName: "Prof. Hemant Sheth",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   shortDescription:
     "Patient information and appointment requests for upper gastrointestinal, hepatobiliary, hernia, and minimally invasive surgical care.",
   emergencyNotice:
